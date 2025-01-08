@@ -30,6 +30,23 @@
 
   <build>
     <finalName>myblog</finalName>
+    <plugins>
+      <plugin>
+        <!-- Команды плагина для deploy/redeploy/undeploy сервлета на локальном Tomcat:
+          $ mvn tomcat7:deploy
+          $ mvn tomcat7:redeploy
+          $ mvn tomcat7:undeploy
+        -->
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <url>http://localhost:8091/manager/text</url>
+          <server>LocalTomcatServer</server>
+          <path>/myblog</path>
+        </configuration>
+      </plugin>
+    </plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
