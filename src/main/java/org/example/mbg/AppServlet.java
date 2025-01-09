@@ -17,6 +17,6 @@ public class AppServlet extends HttpServlet {
         Date date = new Date();
         log.info( "request received: date: " + date.toString());
         req.setAttribute("generatedTime", date.toString());
-        req.getRequestDispatcher("views/index.jsp").forward(req, resp);
+        req.getRequestDispatcher("WEB-INF/views/index.jsp").forward(req, resp);
     }
 }
