@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Блог</title>
+    <link rel="stylesheet" th:href="@{./pages/index.css}"/>
+</head>
+<body>
+<h2 th:text="'Привет!'"></h2>
+<div class="footer">
+    <p class="footer__generated">Сформировано: <span th:text="${generatedTime}"></span></p>
+</div>
+</body>
+</html>
