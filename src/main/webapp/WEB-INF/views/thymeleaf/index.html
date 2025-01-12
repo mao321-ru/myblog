@@ -1,13 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Блог</title>
-    <link rel="stylesheet" th:href="@{./pages/index.css}"/>
+    <link rel="stylesheet" href="pages/index.css" th:href="@{/pages/index.css}">
 </head>
-<body>
-<h2 th:text="'Привет!'"></h2>
-<div class="footer">
-    <p class="footer__generated">Сформировано: <span th:text="${generatedTime}"></span></p>
-</div>
+<body class="page">
+    <div class="lenta">
+        <div class="posts">
+            <div class="post" th:each="post: ${posts}">
+                <div class="post__header">
+                    <a href="posts/1" th:href="@{|posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
+                </div>
+                <p class="post__preview" th:text="${post.previewText}">Это замечательное место, которое нужно посетить каждому</p>
+                <p class="post__tags" th:text="${post.previewTags}">#test #noImage</p>
+                <div class="post__image"></div>
+                <div class="post__footer">
+                    <span class="post__likes" th:if="${post.likeCount}">Лайки: <span th:text="${post.likeCount}">29</span></span>
+                    <span class="post__comments" th:if="${post.commentCount}">Комментарии: <span th:text="${post.commentCount}">50</span></span>
+                    <span class="post__date">Добавлено: <span th:text="${#temporals.format(post.createTime,'dd.MM.yyyy HH:mm:ss')}">02.01.2024 18:30:41</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
+    </div>
 </body>
 </html>

@@ -15,7 +15,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan({ "org.example.mbg.web" })
+@ComponentScan({
+    "org.example.mbg.controller",
+    "org.example.mbg.service"
+})
 public class SpringWebConfig implements WebMvcConfigurer {
 
     // Spring + Thymeleaf need this
