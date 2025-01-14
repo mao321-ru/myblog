@@ -1,37 +1,20 @@
-package org.example.mbg.config;
+package org.example.mbg.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
-@EnableWebMvc
 @Configuration
-@ComponentScan({
-    "org.example.mbg.controller",
-    "org.example.mbg.repository",
-    "org.example.mbg.service"
-})
-public class SpringWebConfig implements WebMvcConfigurer {
+public class ThymeleafConfiguration {
 
-    // Spring + Thymeleaf need this
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/pages/**").addResourceLocations("/pages/");
-    }
-
-    // Spring + Thymeleaf
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         // SpringResourceTemplateResolver automatically integrates with Spring's own
@@ -49,7 +32,6 @@ public class SpringWebConfig implements WebMvcConfigurer {
         return templateResolver;
     }
 
-    // Spring + Thymeleaf
     @Bean
     public SpringTemplateEngine templateEngine() {
         // SpringTemplateEngine automatically applies SpringStandardDialect and
@@ -65,8 +47,6 @@ public class SpringWebConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
-    // Spring + Thymeleaf
-    // Configure Thymeleaf View Resolver
     @Bean
     public ThymeleafViewResolver viewResolver() {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();

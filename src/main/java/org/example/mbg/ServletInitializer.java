@@ -1,6 +1,5 @@
 package org.example.mbg;
 
-import org.example.mbg.config.SpringWebConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class ServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -14,7 +13,7 @@ public class ServletInitializer extends AbstractAnnotationConfigDispatcherServle
     // controller, view resolver, handler mapping
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{SpringWebConfig.class};
+        return new Class[]{WebConfiguration.class};
     }
 
     @Override
