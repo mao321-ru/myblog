@@ -17,6 +17,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 @Configuration
 @ComponentScan({
     "org.example.mbg.controller",
+    "org.example.mbg.repository",
     "org.example.mbg.service"
 })
 public class SpringWebConfig implements WebMvcConfigurer {

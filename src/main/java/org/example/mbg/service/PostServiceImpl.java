@@ -1,32 +1,22 @@
 package org.example.mbg.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.example.mbg.dto.PostPreviewDto;
+import org.example.mbg.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
+@Log
+@RequiredArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
+    private final PostRepository repo;
     @Override
     public List<PostPreviewDto> findPosts() {
-        List<PostPreviewDto> posts = List.of(
-            PostPreviewDto.builder()
-                .postId( 1L)
-                .title( "Байкал")
-                .previewText( "Это замечательное озеро")
-                .previewTags( "#nature #baikal")
-                .createTime( LocalDateTime.parse( "2025-01-12T19:44:05"))
-                .likeCount( 3)
-                .commentCount( 2)
-                .build(),
-            PostPreviewDto.builder()
-                .postId( 2L)
-                .title( "Амур")
-                .build()
-        );
+        List<PostPreviewDto> posts = repo.findAll().stream().map( PostPreviewDto::fromModel).toList();
         return posts;
     }
 }
