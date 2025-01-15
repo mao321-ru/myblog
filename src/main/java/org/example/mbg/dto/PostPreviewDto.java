@@ -29,7 +29,7 @@ public class PostPreviewDto {
                     .map( s -> "#" + s)
                     .collect( Collectors.joining(" "))
             )
-            .createTime( o.getCreateTime().toLocalDateTime())
+            .createTime( o.getCreateTime())
             .likeCount( o.getLikeCount())
             // TODO не реализовано
             .commentCount( 0)

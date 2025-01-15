@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +15,6 @@ public class Post {
     private String title;
     private String text;
     @Builder.Default private List<String> tags = new ArrayList<>();
-    @Builder.Default private ZonedDateTime createTime = ZonedDateTime.now();
+    @Builder.Default private LocalDateTime createTime = LocalDateTime.now();
     private int likeCount;
 }
