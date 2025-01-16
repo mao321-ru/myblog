@@ -2,6 +2,7 @@ package org.example.mbg.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -10,9 +11,7 @@ import org.example.mbg.service.PostService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Log
 @RequiredArgsConstructor
@@ -28,6 +27,12 @@ public class PostController {
         model.addAttribute( "posts", service.findPosts());
         model.addAttribute( "generatedTime", genTime);
         return "index";
+    }
+
+    @PostMapping
+    public String savePost(@RequestParam Map<String,String> allParams) {
+        log.info( "allParams: " + allParams);
+        return "redirect:/";
     }
 
     @GetMapping("/{postId}")
