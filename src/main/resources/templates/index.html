@@ -35,8 +35,11 @@
     <div class="footer">
         <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
     </div>
+
+    <!-- Динамически отображаемая форма добавления поста -->
     <div class="popup popup_type_add">
         <div class="popup__container">
+            <form class='popup__form' th:action="@{/}" method="POST" enctype="multipart/form-data">
             <div class="popup__header">
                 <h2 class="popup__title">Создание поста</h2>
                 <button class="popup__close"></button>
@@ -44,66 +47,33 @@
             <ul class='popup__iform'>
                 <li>
                     <p>Заголовок:</p>
-                    <input name='title' oninput="OnChangeText(event)" />
+                    <input class='popup__title' name='title'/>
                 </li>
                 <li>
                     <p>Теги:</p>
-                    <input name='tags' oninput="OnChangeText(event)" />
+                    <input name='tags'/>
                 </li>
                 <li>
                     <p>Текст:</p>
-                    <textarea oninput="OnChangeText(event)" class='popup__text' id="post_text" name="post_text" rows="7" cols="53"></textarea>
+                    <textarea class='popup__text' name="text" rows="7" cols="53"></textarea>
                 </li>
                 <li>
-                    <label>
-                        <input type="file" onChange="OnChangeFile(event)" />
-                    </label>
+                    <input type="file" name="file" />
                 </li>
             </ul>
             <button class='popup__save'>Сохранить</button>
+            </form>
         </div>
     </div>
-</body>
-</html>
 
 <script>
-    const btnAddPost = document.querySelector('.header__post-add')
     const addPopupPost = document.querySelector('.popup_type_add')
+    const btnAddPost = document.querySelector('.header__post-add')
     const btnPopupClose = document.querySelector('.popup__close')
+
+    const inpPopupTitle = document.querySelector('.popup__title')
+    const frmPopupForm = document.querySelector('.popup__form')
     const btnPopupSave = document.querySelector('.popup__save')
-    // туда будем сохранять значения из формы
-    const PostFormData = new FormData();
-
-    // добавляем данные из формы
-    const OnChangeText = (event) => {
-        const activeInput = event.target
-        if (activeInput.name == 'title') PostFormData.set('title', activeInput.value);
-        else if (activeInput.name == 'tags') PostFormData.set('tags', activeInput.value);
-        else if (activeInput.name == 'post_text') PostFormData.set('text', activeInput.value);
-    }
-
-    // функция добавления картинки
-    const OnChangeFile = (event) => {
-        PostFormData.set('file', event.target.files[0]);
-    };
-
-    //сохраняем пост
-    btnPopupSave.addEventListener('click', (e) => {
-        e.preventDefault();
-        // проверяем, введен ли заголовок поста
-        if (PostFormData.has('title') && PostFormData.get('title') !== '') {
-            fetch('', {
-                method: 'POST',
-                headers: {},
-                body: PostFormData
-            })
-                .catch((err) => (console.log(err)))
-        }
-
-        //закрываем форму
-        addPopupPost.classList.remove('popup_opened')
-    })
-
 
     // Открываем форму
     btnAddPost.addEventListener('click', (e) => {
@@ -111,9 +81,24 @@
         addPopupPost.classList.add('popup_opened')
     })
 
-    // закрываем форму
+    // Закрываем форму
     btnPopupClose.addEventListener('click', (e) => {
         e.preventDefault();
         addPopupPost.classList.remove('popup_opened')
     })
+
+    // Сохраняем пост
+    btnPopupSave.addEventListener('click', (e) => {
+        e.preventDefault();
+        // проверяем, введен ли заголовок поста
+        if ( inpPopupTitle.value !== '') {
+            frmPopupForm.submit();
+        }
+
+        //закрываем форму
+        addPopupPost.classList.remove('popup_opened')
+    })
 </script>
+
+</body>
+</html>

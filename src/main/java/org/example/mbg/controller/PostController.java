@@ -12,6 +12,7 @@ import org.example.mbg.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Log
 @RequiredArgsConstructor
@@ -30,8 +31,16 @@ public class PostController {
     }
 
     @PostMapping
-    public String savePost(@RequestParam Map<String,String> allParams) {
-        log.info( "allParams: " + allParams);
+    public String savePost(
+        @RequestParam( "title") String title,
+        @RequestParam( name = "tags",  required = false) String tags,
+        @RequestParam( name = "text", required = false) String text,
+        @RequestParam( name = "file", required = false) MultipartFile file
+    ) {
+        log.info( "title: " + title + ", tags: " + tags + ", text: " + text);
+        if ( file != null) {
+            log.info("file: " + file.getOriginalFilename() + ", size: " + file.getSize());
+        }
         return "redirect:/";
     }
 
