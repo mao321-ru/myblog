@@ -74,12 +74,16 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
 
-            <!-- add for Lombok configuration -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
+                    <!-- from Spring Framework 6.1 Release Notes, allow bind parameters in @Controller by field name -->
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                    <!-- add for Lombok configuration -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

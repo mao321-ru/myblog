@@ -32,13 +32,13 @@ public class PostController {
 
     @PostMapping
     public String savePost(
-        @RequestParam( "title") String title,
-        @RequestParam( name = "tags",  required = false) String tags,
-        @RequestParam( name = "text", required = false) String text,
-        @RequestParam( name = "file", required = false) MultipartFile file
+        String title,
+        @RequestParam( required = false) String tags,
+        @RequestParam( required = false) String text,
+        @RequestParam( required = false) MultipartFile file
     ) {
         log.info( "title: " + title + ", tags: " + tags + ", text: " + text);
-        if ( file != null) {
+        if ( file != null && !file.isEmpty()) {
             log.info("file: " + file.getOriginalFilename() + ", size: " + file.getSize());
         }
         return "redirect:/";
