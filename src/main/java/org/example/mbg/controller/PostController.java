@@ -2,7 +2,6 @@ package org.example.mbg.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -11,7 +10,10 @@ import org.example.mbg.service.PostService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 @Log
@@ -33,9 +35,9 @@ public class PostController {
     @PostMapping
     public String savePost(
         String title,
-        @RequestParam( required = false) String tags,
-        @RequestParam( required = false) String text,
-        @RequestParam( required = false) MultipartFile file
+        String tags,
+        String text,
+        MultipartFile file
     ) {
         log.info( "title: " + title + ", tags: " + tags + ", text: " + text);
         if ( file != null && !file.isEmpty()) {
