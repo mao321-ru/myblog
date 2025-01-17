@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
+import org.example.mbg.dto.PostCreateDto;
 import org.example.mbg.service.PostService;
 
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MultipartFile;
 
 @Log
 @RequiredArgsConstructor
@@ -26,23 +26,19 @@ public class PostController {
     @GetMapping
     public String findPosts(Model model) {
         var genTime = LocalDateTime.now();
-        log.info( "request time: " + genTime.format( DateTimeFormatter.ofPattern( "dd.MM.yyyy HH:mm:ss")));
-        model.addAttribute( "posts", service.findPosts());
+        log.info( "generated: " + genTime.format( DateTimeFormatter.ofPattern( "dd.MM.yyyy HH:mm:ss")));
+        var posts = service.findPosts();
+        log.info( "posts: " + posts);
+        model.addAttribute( "posts", posts);
         model.addAttribute( "generatedTime", genTime);
         return "index";
     }
 
     @PostMapping
-    public String savePost(
-        String title,
-        String tags,
-        String text,
-        MultipartFile file
+    public String createPost(
+           PostCreateDto post
     ) {
-        log.info( "title: " + title + ", tags: " + tags + ", text: " + text);
-        if ( file != null && !file.isEmpty()) {
-            log.info("file: " + file.getOriginalFilename() + ", size: " + file.getSize());
-        }
+        service.createPost( post);
         return "redirect:/";
     }
 

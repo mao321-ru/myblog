@@ -19,7 +19,7 @@ public class JdbcNativePostRepository implements PostRepository {
     @Override
     public List<Post> findAll() {
         return jdbcTemplate.query(
-                "select id, title, text, like_count, create_time from posts order by id",
+                "select id, title, text, like_count, create_time from posts order by id desc",
                 (rs, rowNum) -> Post.builder()
                         .id( rs.getLong("id"))
                         .title( rs.getString("title"))
@@ -28,5 +28,14 @@ public class JdbcNativePostRepository implements PostRepository {
                         .createTime( rs.getTimestamp( "create_time").toLocalDateTime())
                         .build()
                 );
+    }
+
+    @Override
+    public void createPost(Post p) {
+        jdbcTemplate.update(
+                "insert into posts ( title, text) values ( ?, ?)",
+                p.getTitle(),
+                p.getText()
+        );
     }
 }
