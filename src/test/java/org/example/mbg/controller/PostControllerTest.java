@@ -4,6 +4,8 @@ import org.example.mbg.configuration.WebConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 @SpringJUnitWebConfig( classes = { WebConfiguration.class})
+@TestPropertySource( locations = "classpath:test-application.properties")
+@Sql( "/test-data.sql")
 public class PostControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -35,7 +39,7 @@ public class PostControllerTest {
                 .andExpect( status().isOk())
                 .andExpect( content().contentType( "text/html;charset=UTF-8"))
                 // проверка числа постов, выводимых в <div class="post" ...>
-                .andExpect( xpath( "//div[@class=\"post\"]").nodeCount( 4))
+                .andExpect( xpath( "//div[@class=\"post\"]").nodeCount( 2))
         ;
     }
 }
