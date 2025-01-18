@@ -27,9 +27,7 @@ public class PostController {
     public String findPosts(Model model) {
         var genTime = LocalDateTime.now();
         log.info( "generated: " + genTime.format( DateTimeFormatter.ofPattern( "dd.MM.yyyy HH:mm:ss")));
-        var posts = service.findPosts();
-        log.info( "posts: " + posts);
-        model.addAttribute( "posts", posts);
+        model.addAttribute( "posts", service.findPosts());
         model.addAttribute( "generatedTime", genTime);
         return "index";
     }
