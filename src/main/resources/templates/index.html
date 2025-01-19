@@ -22,7 +22,7 @@
                     <a href="posts/1" th:href="@{|posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
                 </div>
                 <p class="post__preview" th:text="${post.previewText}">Это замечательное место, которое нужно посетить каждому</p>
-                <p class="post__tags" th:text="${post.previewTags}">#test #noImage</p>
+                <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
                 <div class="post__image"></div>
                 <div class="post__footer">
                     <span class="post__likes" th:if="${post.likeCount}">Лайки: <span th:text="${post.likeCount}">29</span></span>

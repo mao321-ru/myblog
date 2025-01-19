@@ -13,14 +13,9 @@ public class PostMapper {
     public static Post toPost(PostCreateDto pd) {
         return Post.builder()
                 .title( pd.getTitle())
-                .tags(
-                    Arrays.stream(
-                            Optional.ofNullable( pd.getTags()).orElse( "")
-                                .split("[#\\s]+")
-                        )
-                        .filter( s -> s.length() > 0)
-                        .distinct()
-                        .toList()
+                .tags( Optional.ofNullable( pd.getTags())
+                    .map( s -> s.strip().replaceAll( "\\s{2,}", " "))
+                    .orElse( null)
                 )
                 .text( pd.getText())
                 // TODO use pd.getFile()
@@ -32,11 +27,7 @@ public class PostMapper {
                 .postId( p.getPostId())
                 .title( p.getTitle())
                 .previewText( p.getText())
-                .previewTags(
-                    p.getTags().stream()
-                        .map( s -> "#" + s)
-                        .collect( Collectors.joining(" "))
-                )
+                .tags( p.getTags())
                 .createTime( p.getCreateTime())
                 .likeCount( p.getLikeCount())
                 // TODO не реализовано

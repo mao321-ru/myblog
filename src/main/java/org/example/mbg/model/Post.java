@@ -14,7 +14,7 @@ public class Post {
     private Long postId;
     private String title;
     private String text;
-    @Builder.Default private List<String> tags = new ArrayList<>();
+    private String tags;
     @Builder.Default private LocalDateTime createTime = LocalDateTime.now();
     private int likeCount;
 }
