@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @Data
 public class Post {
-    private Long id;
+    private Long postId;
     private String title;
     private String text;
     @Builder.Default private List<String> tags = new ArrayList<>();

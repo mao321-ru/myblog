@@ -29,7 +29,7 @@ public class PostMapper {
 
     public static PostPreviewDto toPostPreviewDto(Post p) {
         return PostPreviewDto.builder()
-                .postId( p.getId())
+                .postId( p.getPostId())
                 .title( p.getTitle())
                 .previewText( p.getText())
                 .previewTags(

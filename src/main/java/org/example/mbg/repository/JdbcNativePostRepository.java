@@ -19,9 +19,9 @@ public class JdbcNativePostRepository implements PostRepository {
     @Override
     public List<Post> findAll() {
         return jdbcTemplate.query(
-                "select id, title, text, like_count, create_time from posts order by id desc",
+                "select post_id, title, text, like_count, create_time from posts order by post_id desc",
                 (rs, rowNum) -> Post.builder()
-                        .id( rs.getLong("id"))
+                        .postId( rs.getLong("post_id"))
                         .title( rs.getString("title"))
                         .text( rs.getString("text"))
                         .likeCount( rs.getInt("like_count"))

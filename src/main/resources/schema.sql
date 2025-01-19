@@ -1,6 +1,6 @@
 -- Посты блога
 create table if not exists posts(
-    id bigserial primary key,
+    post_id bigserial primary key,
     title varchar(256) not null,
     text varchar(256),
     like_count integer,

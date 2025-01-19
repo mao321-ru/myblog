@@ -1,4 +1,4 @@
-alter sequence posts_id_seq restart with 1;
+alter sequence posts_post_id_seq restart with 1;
 
 -- Вставка начальных тестовых данных при отсутствии (проверка по title)
 insert into
@@ -36,5 +36,5 @@ where
         )
 ;
 
--- id для временных данных (создавемые в процессе тестов) начинаются с 1001
-alter sequence posts_id_seq restart with 1001;
+-- post_id для временных данных (создавемые в процессе тестов) начинаются с 1001
+alter sequence posts_post_id_seq restart with 1001;
