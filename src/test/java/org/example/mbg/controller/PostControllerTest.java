@@ -28,6 +28,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД изменений последнего выполнявшегося теста
 @Sql( scripts = {"/clear-temp-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD )
 public class PostControllerTest {
+
+    // число постов в тестовых данных
+    private final int TEST_POSTS_COUNT = 4;
+
+    // выбор всех div с постами
+    private final String POSTS_XPATH = "//div[@class=\"post\"]";
+
+    // выбор верхнего поста
+    private final String TOP_POST_XPATH = POSTS_XPATH + "[1]";
+
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -45,7 +55,36 @@ public class PostControllerTest {
                 .andExpect( status().isOk())
                 .andExpect( content().contentType( "text/html;charset=UTF-8"))
                 // проверка числа постов, выводимых в <div class="post" ...>
-                .andExpect( xpath( "//div[@class=\"post\"]").nodeCount( 2))
+                .andExpect( xpath( POSTS_XPATH).nodeCount( TEST_POSTS_COUNT))
+        ;
+    }
+
+    @Test
+    void findPosts_filterEmpty() throws Exception {
+        mockMvc.perform(
+                    get( "/")
+                        .param( "tags", "not_exists_tag")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "text/html;charset=UTF-8"))
+                // нет постов
+                .andExpect( xpath( POSTS_XPATH).nodeCount( 0))
+        ;
+    }
+
+    @Test
+    void findPosts_filterOnePost() throws Exception {
+        mockMvc.perform(
+                        get( "/")
+                                .param( "tags", "  river   nice nice  ")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "text/html;charset=UTF-8"))
+                // нет постов
+                .andExpect( xpath( POSTS_XPATH).nodeCount( 1))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
         ;
     }
 
@@ -54,7 +93,7 @@ public class PostControllerTest {
         mockMvc.perform(
                     post( "/")
                             .param( "title", "newPost")
-                            .param( "tags", "  tagFirst tag2   tagLast   ")
+                            .param( "tags", "  tagFirst tag2   tagLast  tag2 ")
                             .param( "text", "Text of new post")
                 )
                 //.andDo( print()) // вывод запроса и ответа
@@ -63,8 +102,6 @@ public class PostControllerTest {
         ;
 
         // Проверяем страницу, выводимую по редиректу после создания поста
-        // XPath для выбора верхнего поста
-        final var TOP_POST_XPATH = "//div[@class=\"post\"][1]";
         mockMvc.perform( get( "/"))
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())

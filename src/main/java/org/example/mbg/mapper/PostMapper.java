@@ -13,10 +13,7 @@ public class PostMapper {
     public static Post toPost(PostCreateDto pd) {
         return Post.builder()
                 .title( pd.getTitle())
-                .tags( Optional.ofNullable( pd.getTags())
-                    .map( s -> s.strip().replaceAll( "\\s{2,}", " "))
-                    .orElse( null)
-                )
+                .tags( normalizeTags( pd.getTags()))
                 .text( pd.getText())
                 // TODO use pd.getFile()
                 .build();
@@ -35,4 +32,19 @@ public class PostMapper {
                 .build();
     }
 
+    public static String normalizeTags(String tags) {
+        return Optional.ofNullable( tags)
+                .map( s ->
+                    Arrays.stream(
+                        // получаем строку тегов с разделитем пробел
+                        s.replaceAll( "\\s+", " ")
+                            .strip()
+                            .split( " ")
+                    )
+                    // убираем дублирующие теги с сохранением их порядка
+                    .distinct()
+                    .collect(Collectors.joining( " "))
+                )
+                .orElse( "");
+    }
 }

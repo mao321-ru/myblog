@@ -7,14 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 import org.example.mbg.dto.PostCreateDto;
+import org.example.mbg.mapper.PostMapper;
 import org.example.mbg.service.PostService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Log
 @RequiredArgsConstructor
@@ -24,11 +22,15 @@ public class PostController {
     private final PostService service;
 
     @GetMapping
-    public String findPosts(Model model) {
-        var genTime = LocalDateTime.now();
-        log.info( "generated: " + genTime.format( DateTimeFormatter.ofPattern( "dd.MM.yyyy HH:mm:ss")));
-        model.addAttribute( "posts", service.findPosts());
-        model.addAttribute( "generatedTime", genTime);
+    public String findPosts(
+        @RequestParam( required = false) String tags,
+        Model model
+    ) {
+        log.info( "tags: " + tags);
+        String normalizedTags = PostMapper.normalizeTags( tags);
+        model.addAttribute( "normalizedTags", normalizedTags);
+        model.addAttribute( "posts", service.findPosts( normalizedTags));
+        model.addAttribute( "generatedTime", LocalDateTime.now());
         return "index";
     }
 
