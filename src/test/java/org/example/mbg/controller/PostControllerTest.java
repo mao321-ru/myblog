@@ -4,28 +4,30 @@ import org.example.mbg.configuration.WebConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.io.InputStream;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitWebConfig( classes = { WebConfiguration.class})
 @TestPropertySource( locations = "classpath:test-application.properties")
+// расскомментировать для пересоздания объектов схемы
+//@Sql( scripts = {"/uninstall.sql", "/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 // расскомментировать для перезаливки тестовых данных
 //@Sql( scripts = {"/clear-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 @Sql( scripts = {"/clear-temp-data.sql", "/test-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
-// очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД изменений последнего выполнявшегося теста
+// очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД данных последнего выполнявшегося теста
 @Sql( scripts = {"/clear-temp-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD )
 public class PostControllerTest {
 
@@ -37,6 +39,15 @@ public class PostControllerTest {
 
     // выбор верхнего поста
     private final String TOP_POST_XPATH = POSTS_XPATH + "[1]";
+
+    // Путь к png-картинке для использования в тестах
+    private final String TEST_PNG_IMAGE_PATH = "static/images/btn_close_popup.png";
+
+    // post_id несуществуюего поста
+    private final long NOT_EXITS_POST_ID = 999L;
+
+    // post_id первого поста, созданного при выполнении теста
+    private final long START_TEMP_POST_ID = 1001L;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -89,6 +100,14 @@ public class PostControllerTest {
     }
 
     @Test
+    void getPostImage_checkNotFound() throws Exception {
+        mockMvc.perform( get( "/{postId}/image", NOT_EXITS_POST_ID))
+                .andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isNotFound())
+        ;
+    }
+
+    @Test
     void createPost_checkNewPostInTop() throws Exception {
         mockMvc.perform(
                     post( "/")
@@ -111,6 +130,34 @@ public class PostControllerTest {
                 // для тегов проверяем нормализацию пробелов и сохранение исходного порядка
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "tagFirst tag2 tagLast"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__preview\"]").string( "Text of new post"))
+        ;
+    }
+
+    @Test
+    void createPost_checkSaveImage() throws Exception {
+        byte[] fileData = getClass().getClassLoader().getResourceAsStream(TEST_PNG_IMAGE_PATH).readAllBytes();
+        var file = new MockMultipartFile(
+            "file",
+            "createPost_checkSaveImage_img.png",
+            "image/png",
+            fileData
+        );
+        mockMvc.perform( multipart( "/")
+                    .file( file)
+                    .param( "title", "createPost_checkSaveImage")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/"))
+        ;
+
+        // Проверяем возврат добавленного изображения
+        mockMvc.perform( get( "/" + START_TEMP_POST_ID + "/image"))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "image/png"))
+                .andExpect(MockMvcResultMatchers.header().string("Content-Length", String.valueOf( fileData.length)))
+                .andExpect( content().bytes( fileData))
         ;
     }
 }

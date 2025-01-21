@@ -17,7 +17,7 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 // расскомментировать для перезаливки тестовых данных
 //@Sql( scripts = {"/clear-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 @Sql( scripts = {"/clear-temp-data.sql", "/test-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
-// очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД изменений последнего выполнявшегося теста
+// очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД данных последнего выполнявшегося теста
 @Sql( scripts = {"/clear-temp-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD )
 public class JdbcNativePostRepositoryTest {
 

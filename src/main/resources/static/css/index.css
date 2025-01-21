@@ -208,3 +208,7 @@
 .filter__save:hover{
     opacity: 0.6;
 }
+
+.post__image_img{
+    height: 200px;
+}

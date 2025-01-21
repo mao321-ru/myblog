@@ -1,26 +1,55 @@
 package org.example.mbg.repository;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.example.mbg.model.Post;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
+import org.springframework.jdbc.support.lob.LobCreator;
+import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
+@Log
+@RequiredArgsConstructor
 public class JdbcNativePostRepository implements PostRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final LobHandler lobHandler;
+
+    // Базовый SQL для получения данных поста и соответствующий маппер
+    private String FIND_POST_BASE_SQL =
+        """
+        select
+            p.post_id,
+            p.title,
+            p.tags_str as tags,
+            p.text,
+            p.like_count,
+            p.create_time,
+            pi.orig_filename as image_filename
+        from
+            posts p
+            left join post_images pi
+                on pi.post_id = p.post_id
+        """;
     private final RowMapper<Post> postRowMapper = ( rs, rownum ) -> {
         return Post.builder()
                 .postId( rs.getLong("post_id"))
@@ -29,26 +58,14 @@ public class JdbcNativePostRepository implements PostRepository {
                 .text( rs.getString("text"))
                 .likeCount( rs.getInt("like_count"))
                 .createTime( rs.getTimestamp( "create_time").toLocalDateTime())
+                .image( Post.Image.builder().origFilename( rs.getString( "image_filename")).build())
                 .build();
     };
 
-    public JdbcNativePostRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     @Override
     public List<Post> findAll() {
-        return jdbcTemplate.query(
+        return jdbcTemplate.query( FIND_POST_BASE_SQL +
                 """
-                select
-                    post_id,
-                    title,
-                    tags_str as tags, 
-                    text, 
-                    like_count, 
-                    create_time
-                from
-                    posts p
                 order by 
                     p.post_id desc
                 """,
@@ -56,20 +73,12 @@ public class JdbcNativePostRepository implements PostRepository {
         );
     }
 
+
     @Override
     public List<Post> findByTags(String tags) {
         int tagsCount = tags.split( " ").length;
-        return jdbcTemplate.query(
+        return jdbcTemplate.query( FIND_POST_BASE_SQL +
                 """
-                select
-                    post_id,
-                    title,
-                    tags_str as tags,
-                    text,
-                    like_count,
-                    create_time
-                from
-                    posts p
                 where
                     p.post_id in
                         (
@@ -95,6 +104,24 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
+    public Optional<Post.Image> findPostImage(long postId) {
+        List<Post.Image> lst = jdbcTemplate.query(
+                """
+                select orig_filename, content_type, file_data from post_images where post_id = ?
+                """,
+                ( rs, rownum) -> {
+                    return Post.Image.builder()
+                            .origFilename( rs.getString( "orig_filename"))
+                            .contentType( rs.getString( "content_type"))
+                            .fileData( rs.getBytes( "file_data"))
+                            .build();
+                },
+                postId
+        );
+        return lst.stream().findFirst();
+    }
+
+    @Override
     public void createPost(Post p) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
@@ -115,7 +142,11 @@ public class JdbcNativePostRepository implements PostRepository {
         if( !p.getTags().isEmpty()) {
             mergePostTags( p.getPostId(), p.getTags());
         }
+        if( p.getImage() != null) {
+            mergePostImage( p.getPostId(), p.getImage());
+        }
     }
+
 
     private void mergePostTags(@NonNull Long postId, String tags) {
         jdbcTemplate.update(
@@ -179,6 +210,32 @@ public class JdbcNativePostRepository implements PostRepository {
                 postId,
                 tags,
                 postId
+        );
+    }
+
+    private void mergePostImage(Long postId, Post.Image image) {
+        byte[] fd = image.getFileData();
+        jdbcTemplate.execute(
+                """
+                insert into
+                    post_images
+                (
+                    post_id,
+                    orig_filename,
+                    content_type,
+                    file_data
+                )
+                values
+                (?, ?, ?, ?)
+                """,
+                new AbstractLobCreatingPreparedStatementCallback(lobHandler) {
+                    protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException {
+                        ps.setLong(1, postId);
+                        ps.setString(2, image.getOrigFilename());
+                        ps.setString(3, image.getContentType());
+                        lobCreator.setBlobAsBinaryStream( ps, 4, new ByteArrayInputStream( fd), fd.length);
+                    }
+                }
         );
     }
 }

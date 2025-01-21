@@ -8,6 +8,14 @@ create table if not exists posts(
     create_time timestamp with time zone default current_timestamp not null
 );
 
+-- Картинки постов
+create table if not exists post_images(
+    post_id bigint not null unique,
+    orig_filename varchar(256) not null,
+    content_type varchar(256) not null,
+    file_data bytea not null
+);
+
 -- Теги (справочник)
 create table if not exists tags(
     tag_id bigserial primary key,

@@ -47,7 +47,9 @@
                 </div>
                 <p class="post__preview" th:text="${post.previewText}">Это замечательное место, которое нужно посетить каждому</p>
                 <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
-                <div class="post__image"></div>
+                <div class="post__image" th:if="${post.isImage}">
+                    <img class="post__image_img" th:src="@{|posts/${post.postId}/image|}" alt="post_image" />
+                </div>
                 <div class="post__footer">
                     <span class="post__likes" th:if="${post.likeCount}">Лайки: <span th:text="${post.likeCount}">29</span></span>
                     <span class="post__comments" th:if="${post.commentCount}">Комментарии: <span th:text="${post.commentCount}">50</span></span>

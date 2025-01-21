@@ -10,10 +10,11 @@ import org.example.mbg.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
+@Service
 @Log
 @RequiredArgsConstructor
-@Service
 public class PostServiceImpl implements PostService {
     private final PostRepository repo;
     @Override
@@ -25,5 +26,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public void createPost(PostCreateDto post) {
         repo.createPost( PostMapper.toPost( post));
+    }
+
+    @Override
+    public Optional<Post.Image> findPostImage(long postId) {
+        return repo.findPostImage( postId);
     }
 }

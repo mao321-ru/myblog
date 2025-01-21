@@ -1,8 +1,10 @@
 package org.example.mbg.mapper;
 
+import lombok.SneakyThrows;
 import org.example.mbg.dto.PostCreateDto;
 import org.example.mbg.dto.PostPreviewDto;
 import org.example.mbg.model.Post;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -10,12 +12,21 @@ import java.util.stream.Collectors;
 
 public class PostMapper {
 
+    @SneakyThrows
     public static Post toPost(PostCreateDto pd) {
+        MultipartFile f = pd.getFile();
         return Post.builder()
                 .title( pd.getTitle())
                 .tags( normalizeTags( pd.getTags()))
                 .text( pd.getText())
-                // TODO use pd.getFile()
+                .image(
+                    f == null || f.isEmpty() ? null
+                        : Post.Image.builder()
+                            .origFilename( f.getOriginalFilename())
+                            .contentType( f.getContentType())
+                            .fileData( f.getBytes())
+                            .build()
+                )
                 .build();
     }
 
@@ -25,6 +36,7 @@ public class PostMapper {
                 .title( p.getTitle())
                 .previewText( p.getText())
                 .tags( p.getTags())
+                .isImage( p.getImage() != null && p.getImage().getOrigFilename() != null && ! p.getImage().getOrigFilename().isEmpty())
                 .createTime( p.getCreateTime())
                 .likeCount( p.getLikeCount())
                 // TODO не реализовано
