@@ -1,5 +1,6 @@
 alter sequence posts_post_id_seq restart with 1;
 alter sequence tags_tag_id_seq restart with 1;
+alter sequence post_comments_comment_id_seq restart with 1;
 
 -- Вставка начальных тестовых данных при отсутствии (проверка по title)
 insert into
@@ -8,20 +9,20 @@ insert into
     title,
     tags_str,
     text,
-    like_count
+    likes_count
 )
 select
     s.title,
     s.tags_str,
     s.text,
-    s.like_count
+    s.likes_count
 from
     (
     select
         'Байкал' as title,
         'lake nice' as tags_str,
         'Это замечательное озеро' as text,
-        1 as like_count
+        1 as likes_count
     union all
     select
         'Амур',
@@ -33,13 +34,13 @@ from
         'Волга',
         'nice river saratov',
         'Это прекрасная река',
-        0
+        5
     union all
     select
         'Саратов',
         'nice city saratov',
         'Это прекрасный город',
-        3
+        0
     ) s
 where
     not exists
@@ -111,3 +112,4 @@ from
 -- id для временных данных (создавемые в процессе тестов) начинаются с 1001
 alter sequence posts_post_id_seq restart with 1001;
 alter sequence tags_tag_id_seq restart with 1001;
+alter sequence post_comments_comment_id_seq restart with 1001;

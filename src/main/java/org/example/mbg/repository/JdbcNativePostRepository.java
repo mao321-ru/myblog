@@ -42,7 +42,7 @@ public class JdbcNativePostRepository implements PostRepository {
             p.title,
             p.tags_str as tags,
             p.text,
-            p.like_count,
+            p.likes_count,
             p.create_time,
             pi.orig_filename as image_filename
         from
@@ -56,7 +56,7 @@ public class JdbcNativePostRepository implements PostRepository {
                 .title( rs.getString("title"))
                 .tags( rs.getString("tags"))
                 .text( rs.getString("text"))
-                .likeCount( rs.getInt("like_count"))
+                .likesCount( rs.getInt("likes_count"))
                 .createTime( rs.getTimestamp( "create_time").toLocalDateTime())
                 .image( Post.Image.builder().origFilename( rs.getString( "image_filename")).build())
                 .build();

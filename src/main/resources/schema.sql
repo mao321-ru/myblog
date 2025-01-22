@@ -4,13 +4,13 @@ create table if not exists posts(
     title varchar(256) not null,
     tags_str varchar(1000),
     text varchar(4000),
-    like_count integer,
+    likes_count integer check (likes_count >= 0),
     create_time timestamp with time zone default current_timestamp not null
 );
 
 -- Картинки постов
 create table if not exists post_images(
-    post_id bigint not null unique,
+    post_id bigint not null unique references posts,
     orig_filename varchar(256) not null,
     content_type varchar(256) not null,
     file_data bytea not null
@@ -25,7 +25,29 @@ create table if not exists tags(
 
 -- Теги постов
 create table if not exists post_tags(
-    post_id bigint not null,
-    tag_id bigint not null,
+    post_id bigint not null references posts,
+    tag_id bigint not null references tags,
     constraint post_tags_pk primary key ( post_id, tag_id)
 );
+
+-- индекс для FK
+create index if not exists
+    post_tags_ix_tag_id
+on
+    post_tags( tag_id)
+;
+
+-- Комментарии постов
+create table if not exists post_comments(
+    comment_id bigserial primary key,
+    post_id bigint not null references posts,
+    comment_text varchar(4000) not null,
+    create_time timestamp with time zone default current_timestamp not null
+);
+
+-- индекс для FK
+create index if not exists
+    post_comments_ix_post_id
+on
+    post_comments( post_id)
+;

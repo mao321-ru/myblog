@@ -17,7 +17,7 @@ public class Post {
     private String text;
     private String tags;
     @Builder.Default private LocalDateTime createTime = LocalDateTime.now();
-    private int likeCount;
+    private int likesCount;
     private Image image;
 
     @Builder

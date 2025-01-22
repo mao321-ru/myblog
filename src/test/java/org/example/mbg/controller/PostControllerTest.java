@@ -87,15 +87,17 @@ public class PostControllerTest {
     @Test
     void findPosts_filterOnePost() throws Exception {
         mockMvc.perform(
-                        get( "/")
-                                .param( "tags", "  river   nice nice  ")
+                    get( "/")
+                    .param( "tags", "  river   nice nice  ")
                 )
-                //.andDo( print()) // вывод запроса и ответа
+                .andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())
                 .andExpect( content().contentType( "text/html;charset=UTF-8"))
-                // нет постов
+                // в тестовых данных должен быть найден один пост "Волга"
                 .andExpect( xpath( POSTS_XPATH).nodeCount( 1))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "Волга"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
         ;
     }
 
