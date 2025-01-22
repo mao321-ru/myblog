@@ -37,10 +37,9 @@ public class PostMapper {
                 .previewText( p.getText())
                 .tags( p.getTags())
                 .isImage( p.getImage() != null && p.getImage().getOrigFilename() != null && ! p.getImage().getOrigFilename().isEmpty())
-                .createTime( p.getCreateTime())
                 .likesCount( p.getLikesCount())
-                // TODO не реализовано
-                .commentCount( 0)
+                .commentsCount( p.getCommentsCount())
+                .createTime( p.getCreateTime())
                 .build();
     }
 

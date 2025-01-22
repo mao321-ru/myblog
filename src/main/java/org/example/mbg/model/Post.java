@@ -16,9 +16,10 @@ public class Post {
     private String title;
     private String text;
     private String tags;
-    @Builder.Default private LocalDateTime createTime = LocalDateTime.now();
-    private int likesCount;
     private Image image;
+    private int likesCount;
+    private int commentsCount;
+    @Builder.Default private LocalDateTime createTime = LocalDateTime.now();
 
     @Builder
     @Data

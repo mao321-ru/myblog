@@ -17,7 +17,7 @@ public class PostPreviewDto {
     private final String previewText;
     private final String tags;
     private final boolean isImage;
-    private final LocalDateTime createTime;
     private final int likesCount;
-    private final int commentCount;
+    private final int commentsCount;
+    private final LocalDateTime createTime;
 }

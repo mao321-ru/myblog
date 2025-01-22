@@ -109,6 +109,33 @@ from
     post_tags pt
 ;
 
+merge into
+    post_comments d
+using
+    (
+    select 3 as post_id, 'Красивая река!' as comment_text
+    union all select 3, 'И широкая!'
+    ) s
+on (
+    d.post_id = s.post_id
+    and d.comment_text = s.comment_text
+)
+when not matched then insert
+    (
+        post_id,
+        comment_text
+    )
+    values
+    (
+        s.post_id,
+        s.comment_text
+    )
+when not matched by source and
+        post_id <= 1000
+    then delete
+;
+
+
 -- id для временных данных (создавемые в процессе тестов) начинаются с 1001
 alter sequence posts_post_id_seq restart with 1001;
 alter sequence tags_tag_id_seq restart with 1001;

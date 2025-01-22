@@ -90,7 +90,7 @@ public class PostControllerTest {
                     get( "/")
                     .param( "tags", "  river   nice nice  ")
                 )
-                .andDo( print()) // вывод запроса и ответа
+                //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())
                 .andExpect( content().contentType( "text/html;charset=UTF-8"))
                 // в тестовых данных должен быть найден один пост "Волга"
@@ -98,13 +98,14 @@ public class PostControllerTest {
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "Волга"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__comments_count\"]").string( "2"))
         ;
     }
 
     @Test
     void getPostImage_checkNotFound() throws Exception {
         mockMvc.perform( get( "/{postId}/image", NOT_EXITS_POST_ID))
-                .andDo( print()) // вывод запроса и ответа
+                //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isNotFound())
         ;
     }

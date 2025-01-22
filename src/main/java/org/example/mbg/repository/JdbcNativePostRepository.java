@@ -42,13 +42,25 @@ public class JdbcNativePostRepository implements PostRepository {
             p.title,
             p.tags_str as tags,
             p.text,
+            pi.orig_filename as image_filename,
             p.likes_count,
-            p.create_time,
-            pi.orig_filename as image_filename
+            coalesce( cm.comments_count, 0) as comments_count,
+            p.create_time
         from
             posts p
             left join post_images pi
                 on pi.post_id = p.post_id
+            left join
+                (
+                select
+                    pc.post_id,
+                    count(1) as comments_count
+                from
+                    post_comments pc
+                group by
+                    pc.post_id
+                ) cm
+                on cm.post_id = p.post_id
         """;
     private final RowMapper<Post> postRowMapper = ( rs, rownum ) -> {
         return Post.builder()
@@ -56,9 +68,10 @@ public class JdbcNativePostRepository implements PostRepository {
                 .title( rs.getString("title"))
                 .tags( rs.getString("tags"))
                 .text( rs.getString("text"))
-                .likesCount( rs.getInt("likes_count"))
-                .createTime( rs.getTimestamp( "create_time").toLocalDateTime())
                 .image( Post.Image.builder().origFilename( rs.getString( "image_filename")).build())
+                .likesCount( rs.getInt("likes_count"))
+                .commentsCount( rs.getInt("comments_count"))
+                .createTime( rs.getTimestamp( "create_time").toLocalDateTime())
                 .build();
     };
 

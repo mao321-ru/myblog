@@ -35,6 +35,7 @@ public class PostController {
         String normalizedTags = PostMapper.normalizeTags( tags);
         model.addAttribute( "normalizedTags", normalizedTags);
         var posts =  service.findPosts( normalizedTags);
+        //log.info( "posts: " + posts);
         model.addAttribute( "posts", posts);
         model.addAttribute( "generatedTime", LocalDateTime.now());
         return "index";
