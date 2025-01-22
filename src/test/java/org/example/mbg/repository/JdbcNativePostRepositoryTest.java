@@ -1,20 +1,18 @@
 package org.example.mbg.repository;
 
-import org.checkerframework.checker.units.qual.C;
 import org.example.mbg.configuration.DataSourceConfiguration;
 import org.example.mbg.model.Post;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.util.AssertionErrors;
 
 import java.util.Optional;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.util.AssertionErrors.*;
 
 @SpringJUnitConfig( classes = { DataSourceConfiguration.class, JdbcNativePostRepository.class})
 @TestPropertySource( locations = "classpath:test-application.properties")
@@ -36,7 +34,7 @@ public class JdbcNativePostRepositoryTest {
 
     @Test
     void findAll_check() {
-        var foundPosts = repo.findAll();
+        var foundPosts = repo.findAll( PageRequest.of( 0, 1000)).toList();
         assertEquals( "Incorrect number of all founded posts", foundPosts.size(), TEST_POSTS_COUNT);
         // заголовок проверямого тестового поста
         var CHECK_POST_TITLE = "Волга";
@@ -52,13 +50,28 @@ public class JdbcNativePostRepositoryTest {
     }
 
     @Test
+    void findAll_checkPages() {
+        var pg = repo.findAll( PageRequest.of( 0, TEST_POSTS_COUNT - 1));
+        assertEquals( "First page: incorrect page number", 0,  pg.getNumber());
+        assertEquals( "First page: incorrect page size", TEST_POSTS_COUNT - 1, pg.getSize());
+        assertEquals( "First page: incorrect hasNext", true, pg.hasNext());
+        assertEquals( "First page: incorrect List size", TEST_POSTS_COUNT - 1, pg.toList().size());
+
+        pg = repo.findAll( PageRequest.of( 1, TEST_POSTS_COUNT - 1));
+        assertEquals( "Last page: incorrect page number", 1,  pg.getNumber());
+        assertEquals( "Last page: incorrect page size", TEST_POSTS_COUNT - 1, pg.getSize());
+        assertEquals( "Last page: incorrect hasNext", false, pg.hasNext());
+        assertEquals( "Last page: incorrect List size", 1, pg.toList().size());
+    }
+
+    @Test
     void findByTags_check() {
         Post post = Post.builder()
                 .title( "findByTags_check: Title")
                 .tags( "findByTags_check_tag")
                 .build();
         repo.createPost( post);
-        var foundPosts = repo.findByTags( post.getTags());
+        var foundPosts = repo.findByTags( post.getTags(), PageRequest.of( 0, 1000)).toList();
         assertEquals( "Incorrect number of posts found", foundPosts.size(), 1);
         if( foundPosts.size() == 1) {
             Post fp = foundPosts.getFirst();

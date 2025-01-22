@@ -3,6 +3,7 @@ package org.example.mbg.controller;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -13,6 +14,7 @@ import org.example.mbg.model.Post;
 import org.example.mbg.service.PostService;
 
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,20 +26,37 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping({ "/", "/posts"})
 public class PostController {
+
+    private final int DEFAULT_PAGE_SIZE = 50;
+
     private final PostService service;
 
     @GetMapping
     public String findPosts(
         @RequestParam( required = false) String tags,
+        @RequestParam Optional<Integer> page,
+        @RequestParam Optional<Integer> psize,
         Model model
     ) {
-        log.info( "tags: " + tags);
+        int currentPage = page.filter( n -> n > 0).orElse( 1);
+        int pageSize = psize.filter( n -> n > 0).orElse( DEFAULT_PAGE_SIZE);
+        log.info( "tags: " + tags + ", currentPage: " + currentPage + ", pageSize: " + pageSize);
+
         String normalizedTags = PostMapper.normalizeTags( tags);
         model.addAttribute( "normalizedTags", normalizedTags);
-        var posts =  service.findPosts( normalizedTags);
-        //log.info( "posts: " + posts);
+
+        var posts =  service.findPosts( normalizedTags, PageRequest.of( currentPage - 1, pageSize));
         model.addAttribute( "posts", posts);
+
+        int totalPages = ( posts.getNumber() + 1) + ( posts.hasNext() ? 1 : 0);
+        if( totalPages > 1 ) {
+            var pageNumbers = IntStream.rangeClosed( 1, totalPages).boxed().toList();
+            model.addAttribute( "pageNumbers", pageNumbers);
+            model.addAttribute( "hasNextPage", posts.hasNext());
+        }
+
         model.addAttribute( "generatedTime", LocalDateTime.now());
+
         return "index";
     }
 

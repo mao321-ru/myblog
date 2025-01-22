@@ -5,24 +5,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.example.mbg.model.Post;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -76,21 +74,36 @@ public class JdbcNativePostRepository implements PostRepository {
     };
 
     @Override
-    public List<Post> findAll() {
-        return jdbcTemplate.query( FIND_POST_BASE_SQL +
+    public Page<Post> findAll(Pageable page) {
+        return toPage(
+            jdbcTemplate.query( FIND_POST_BASE_SQL +
                 """
-                order by 
+                order by
                     p.post_id desc
+                offset ? rows fetch next ? rows only
                 """,
-                postRowMapper
+                postRowMapper,
+          page.getPageSize() * page.getPageNumber(),
+                page.getPageSize() + 1
+            ),
+            page
         );
     }
 
+    private Page<Post> toPage(List<Post> posts, Pageable page) {
+        var size = posts.size();
+        // убираем лишний элемент, который возвращался из БД для проверки наличия следующей страницы
+        if ( size == page.getPageSize() + 1) {
+            posts.removeLast();
+        }
+        return new PageImpl<Post>( posts, page, page.getPageSize() * page.getPageNumber() + size);
+    }
 
     @Override
-    public List<Post> findByTags(String tags) {
+    public Page<Post> findByTags(String tags, Pageable page) {
         int tagsCount = tags.split( " ").length;
-        return jdbcTemplate.query( FIND_POST_BASE_SQL +
+        return toPage(
+            jdbcTemplate.query( FIND_POST_BASE_SQL +
                 """
                 where
                     p.post_id in
@@ -110,10 +123,16 @@ public class JdbcNativePostRepository implements PostRepository {
                         )
                 order by
                     p.post_id desc
+                offset ? rows fetch next ? rows only
                 """,
                 postRowMapper,
-                new Object[]{ tags, tagsCount}
-                );
+          tags,
+                tagsCount,
+                page.getPageSize() * page.getPageNumber(),
+                page.getPageSize() + 1
+            ),
+            page
+        );
     }
 
     @Override

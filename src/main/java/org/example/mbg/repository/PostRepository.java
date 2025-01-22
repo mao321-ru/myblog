@@ -1,14 +1,15 @@
 package org.example.mbg.repository;
 
 import org.example.mbg.model.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
-    List<Post> findAll();
+    Page<Post> findAll(Pageable pageable);
 
-    List<Post> findByTags(String tags);
+    Page<Post> findByTags(String tags, Pageable pageable);
 
     void createPost(Post p);
 

@@ -57,6 +57,14 @@
                 </div>
             </div>
         </div>
+        <div th:if="${pageNumbers}">
+            <p>Страницы:
+                <span class="pagination" th:each="pageNumber : ${pageNumbers}">
+                    <a th:href="@{/(tags=${normalizedTags}, psize=${posts.size}, page=${pageNumber})}"
+                        th:text="${ pageNumber==pageNumbers.size() and hasNextPage ? 'Следующая' : pageNumber }"></a>
+                </span>
+            </p>
+        </div>
     </div>
     <div class="footer">
         <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>

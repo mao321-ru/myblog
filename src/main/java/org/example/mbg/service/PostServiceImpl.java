@@ -7,6 +7,8 @@ import org.example.mbg.dto.PostPreviewDto;
 import org.example.mbg.mapper.PostMapper;
 import org.example.mbg.model.Post;
 import org.example.mbg.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +20,11 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
     private final PostRepository repo;
     @Override
-    public List<PostPreviewDto> findPosts(String tags) {
-        List<Post> posts = ( tags == null || tags.equals( "") ? repo.findAll() : repo.findByTags( tags));
-        return posts.stream().map( PostMapper::toPostPreviewDto).toList();
+    public Page<PostPreviewDto> findPosts(String tags, Pageable pageable) {
+        Page<Post> posts = ( tags == null || tags.equals( "")
+                ? repo.findAll( pageable)
+                : repo.findByTags( tags, pageable));
+        return posts.map( PostMapper::toPostPreviewDto);
     }
 
     @Override
