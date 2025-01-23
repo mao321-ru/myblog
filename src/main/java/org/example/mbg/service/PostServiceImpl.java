@@ -36,4 +36,9 @@ public class PostServiceImpl implements PostService {
     public Optional<Post.Image> findPostImage(long postId) {
         return repo.findPostImage( postId);
     }
+
+    @Override
+    public Optional<PostPreviewDto> getPost(long postId) {
+        return repo.findById( postId).map( PostMapper::toPostPreviewDto);
+    }
 }

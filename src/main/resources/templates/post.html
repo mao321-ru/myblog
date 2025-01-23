@@ -3,49 +3,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Мой блог</title>
-    <link rel="stylesheet" href="css/index.css" th:href="@{/css/index.css}" />
+    <title th:text="${'Мой блог: ' + post.title}">Мой блог: пост</title>
+    <link rel="stylesheet" href="css/post.css" th:href="@{/css/post.css}" />
 </head>
 <body class="page">
     <header class="header">
         <div class="header__container">
-            <h1 class="header__title">Мой блог</h1>
+            <h3 class="header__title"></h3>
             <div>
-                <button class="header__post-add"></button>
+                <button class="header__post-edit"></button>
             </div>
         </div>
     </header>
     <div class="lenta">
 
-        <!-- Блок поиска постов -->
-        <form class='filter__form' th:action="@{/}" method="GET">
-        <div class="fiter__container">
-            <input name="tags" class="filter__tag" placeholder="Поиск..." th:value="${normalizedTags}" />
-            <input name="psize" class="filter__psize" type="hidden" value="50" />
-            <div class="dropdown">
-                <div class="dropdown__inform">
-                    <p class="dropdown__text">50</p>
-                    <button type="button" class="dropdown__button"></button>
-                </div>
-                <ul class="menu" id="optionsMenu">
-                    <li class="menu-item">10</li>
-                    <li class="menu-item">20</li>
-                    <li class="menu-item">50</li>
-                </ul>
-            </div>
-            <button type="button" class="filter__save">
-                <img class="filter__lupa" src="images/lupa.png" alt="lupa" />
-            </button>
-        </div>
-        </form>
-
-
         <div class="posts">
-            <div class="post" th:each="post: ${posts}">
+            <div class="post">
                 <div class="post__header">
-                    <a href="posts/1" th:href="@{|posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
+                    <p class="post__title" th:text="${post.title}">Байкал</p>
                 </div>
-                <p class="post__preview" th:text="${post.getPreviewText()}">Это замечательное место, которое нужно посетить каждому</p>
+                <p class="post__text" th:text="${post.text}">Это замечательное место, которое нужно посетить каждому</p>
                 <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
                 <div class="post__image" th:if="${post.isImage}">
                     <img class="post__image_img" th:src="@{|/posts/${post.postId}/image|}" alt="post_image" />
@@ -57,25 +34,17 @@
                 </div>
             </div>
         </div>
-        <div th:if="${pageNumbers}">
-            <p>Страницы:
-                <span class="pagination" th:each="pageNumber : ${pageNumbers}">
-                    <a th:href="@{/(tags=${normalizedTags}, psize=${posts.size}, page=${pageNumber})}"
-                        th:text="${ pageNumber==pageNumbers.size() and hasNextPage ? 'Следующая' : pageNumber }"></a>
-                </span>
-            </p>
-        </div>
     </div>
     <div class="footer">
         <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
     </div>
 
-    <!-- Динамически отображаемая форма добавления поста -->
+    <!-- Динамически отображаемая форма редактирования поста -->
     <div class="popup popup_type_add">
         <div class="popup__container">
             <form class='popup__form' th:action="@{/}" method="POST" enctype="multipart/form-data">
             <div class="popup__header">
-                <h2 class="popup__title">Создание поста</h2>
+                <h2 class="popup__title">Редактирование поста</h2>
                 <button type="button" class="popup__close"></button>
             </div>
             <ul class='popup__iform'>
@@ -102,7 +71,7 @@
 
 <script>
     const addPopupPost = document.querySelector('.popup_type_add')
-    const btnAddPost = document.querySelector('.header__post-add')
+    const btnEditPost = document.querySelector('.header__post-edit')
     const btnPopupClose = document.querySelector('.popup__close')
 
     const inpPopupTitle = document.querySelector('.popup__title_input')
@@ -111,49 +80,10 @@
     const frmAddPost = document.querySelector('.popup__form')
     const inputsPopup = document.querySelectorAll('.popup__input')
 
-    // Поиск по тегам
-    const dropdownButton = document.querySelector(".dropdown__button");
-    const optionsMenu = document.getElementById("optionsMenu");
-    const dropdownItems = document.querySelectorAll(".menu-item");
-    const dropdownActiveText = document.querySelector(".dropdown__text");
-    const btnFilterPostsSave = document.querySelector(".filter__save");
-    const inpFilterPosts = document.querySelector(".filter__tag");
-    const inpPageSize = document.querySelector(".filter__psize");
-    const frmFilter = document.querySelector('.filter__form')
-
-    // открытие/закрытие выпадающего списка
-    dropdownButton.addEventListener("click", () => {
-        if (optionsMenu.style.display === "block") {
-            optionsMenu.style.display = "none";
-        } else {
-            optionsMenu.style.display = "block";
-        }
-    });
-
-    dropdownItems.forEach((item) => {
-        item.addEventListener("click", () => {
-            dropdownActiveText.innerText = item.innerText
-            optionsMenu.style.display = "none";
-        });
-    });
-
-    // закрытие выпадающего списка при нажатии на внешнюю область
-    document.addEventListener("click", (event) => {
-        if (!event.target.closest(".dropdown")) {
-            optionsMenu.style.display = "none";
-        }
-    });
-
-    // отправляем запрос с фильтрацией постов
-    btnFilterPostsSave.addEventListener("click", () => {
-        inpPageSize.value = dropdownActiveText.innerText
-        frmFilter.submit();
-    });
-
-    // Форма добавления поста
+    // Форма редактирования поста
 
     // Открываем форму
-    btnAddPost.addEventListener('click', (e) => {
+    btnEditPost.addEventListener('click', (e) => {
         e.preventDefault();
         addPopupPost.classList.add('popup_opened')
     })

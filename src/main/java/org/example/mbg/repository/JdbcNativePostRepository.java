@@ -74,6 +74,27 @@ public class JdbcNativePostRepository implements PostRepository {
     };
 
     @Override
+    public Optional<Post> findById(long postId) {
+        return jdbcTemplate.query( FIND_POST_BASE_SQL +
+                """
+                where
+                    p.post_id = ?
+                """,
+                postRowMapper,
+                postId
+            ).stream().findFirst();
+    }
+
+    private Page<Post> toPage(List<Post> posts, Pageable page) {
+        var size = posts.size();
+        // убираем лишний элемент, который возвращался из БД для проверки наличия следующей страницы
+        if ( size == page.getPageSize() + 1) {
+            posts.removeLast();
+        }
+        return new PageImpl<Post>( posts, page, page.getPageSize() * page.getPageNumber() + size);
+    }
+
+    @Override
     public Page<Post> findAll(Pageable page) {
         return toPage(
             jdbcTemplate.query( FIND_POST_BASE_SQL +
@@ -88,15 +109,6 @@ public class JdbcNativePostRepository implements PostRepository {
             ),
             page
         );
-    }
-
-    private Page<Post> toPage(List<Post> posts, Pageable page) {
-        var size = posts.size();
-        // убираем лишний элемент, который возвращался из БД для проверки наличия следующей страницы
-        if ( size == page.getPageSize() + 1) {
-            posts.removeLast();
-        }
-        return new PageImpl<Post>( posts, page, page.getPageSize() * page.getPageNumber() + size);
     }
 
     @Override

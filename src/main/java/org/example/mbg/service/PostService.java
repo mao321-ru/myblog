@@ -14,4 +14,6 @@ public interface PostService {
     void createPost(PostCreateDto post);
 
     Optional<Post.Image> findPostImage(long postId);
+
+    Optional<PostPreviewDto> getPost(long postId);
 }

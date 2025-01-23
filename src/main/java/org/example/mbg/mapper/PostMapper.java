@@ -34,7 +34,7 @@ public class PostMapper {
         return PostPreviewDto.builder()
                 .postId( p.getPostId())
                 .title( p.getTitle())
-                .previewText( p.getText())
+                .text( p.getText())
                 .tags( p.getTags())
                 .isImage( p.getImage() != null && p.getImage().getOrigFilename() != null && ! p.getImage().getOrigFilename().isEmpty())
                 .likesCount( p.getLikesCount())

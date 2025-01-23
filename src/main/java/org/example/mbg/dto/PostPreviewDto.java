@@ -14,10 +14,14 @@ import java.util.stream.Collectors;
 public class PostPreviewDto {
     private final Long postId;
     private final String title;
-    private final String previewText;
+    private final String text;
     private final String tags;
     private final boolean isImage;
     private final int likesCount;
     private final int commentsCount;
     private final LocalDateTime createTime;
+
+    public String getPreviewText() {
+        return text;
+    }
 }

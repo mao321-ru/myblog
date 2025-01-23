@@ -97,6 +97,7 @@ public class PostControllerTest {
                 .andExpect( xpath( POSTS_XPATH).nodeCount( 1))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "Волга"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__preview\"]").string( "Это прекрасная река"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__comments_count\"]").string( "2"))
         ;
@@ -161,6 +162,22 @@ public class PostControllerTest {
                 .andExpect( content().contentType( "image/png"))
                 .andExpect(MockMvcResultMatchers.header().string("Content-Length", String.valueOf( fileData.length)))
                 .andExpect( content().bytes( fileData))
+        ;
+    }
+
+    @Test
+    void showPost_check() throws Exception {
+        mockMvc.perform( get( "/posts/{postId}", 3) )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "text/html;charset=UTF-8"))
+                // в тестовых данных должен быть найден один пост "Волга"
+                .andExpect( xpath( POSTS_XPATH).nodeCount( 1))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "Волга"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__text\"]").string( "Это прекрасная река"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__comments_count\"]").string( "2"))
         ;
     }
 }

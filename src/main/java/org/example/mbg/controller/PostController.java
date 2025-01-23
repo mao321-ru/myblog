@@ -15,11 +15,13 @@ import org.example.mbg.service.PostService;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Log
 @RequiredArgsConstructor
@@ -69,8 +71,12 @@ public class PostController {
     @GetMapping("/{postId}")
     public String showPost(@PathVariable("postId") long postId, Model model) {
         log.info( "show post: postId= " + postId);
+        var post = service.getPost( postId).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
+        );
+        model.addAttribute( "post", post);
         model.addAttribute( "generatedTime", LocalDateTime.now());
-        return "index";
+        return "post";
     }
 
     @GetMapping("/{postId}/image")
