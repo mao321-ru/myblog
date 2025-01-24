@@ -11,9 +11,11 @@ public interface PostRepository {
 
     Page<Post> findByTags(String tags, Pageable pageable);
 
-    void createPost(Post p);
-
     Optional<Post.Image> findPostImage(long postId);
 
     Optional<Post> findById(long postId);
+
+    void createPost(Post p);
+
+    void updatePost(Post p);
 }

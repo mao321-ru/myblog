@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.example.mbg.dto.PostCreateDto;
 import org.example.mbg.dto.PostPreviewDto;
+import org.example.mbg.dto.PostUpdateDto;
 import org.example.mbg.mapper.PostMapper;
 import org.example.mbg.model.Post;
 import org.example.mbg.repository.PostRepository;
@@ -28,11 +29,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void createPost(PostCreateDto post) {
-        repo.createPost( PostMapper.toPost( post));
-    }
-
-    @Override
     public Optional<Post.Image> findPostImage(long postId) {
         return repo.findPostImage( postId);
     }
@@ -40,5 +36,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public Optional<PostPreviewDto> getPost(long postId) {
         return repo.findById( postId).map( PostMapper::toPostPreviewDto);
+    }
+
+    @Override
+    public void createPost(PostCreateDto post) {
+        repo.createPost( PostMapper.toPost( post));
+    }
+
+    @Override
+    public void updatePost(PostUpdateDto post) {
+        repo.updatePost( PostMapper.toPost( post));
     }
 }

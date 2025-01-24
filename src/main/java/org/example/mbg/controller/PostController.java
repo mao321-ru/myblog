@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 import org.example.mbg.dto.PostCreateDto;
+import org.example.mbg.dto.PostUpdateDto;
 import org.example.mbg.mapper.PostMapper;
 import org.example.mbg.model.Post;
 import org.example.mbg.service.PostService;
@@ -42,7 +43,7 @@ public class PostController {
     ) {
         int currentPage = page.filter( n -> n > 0).orElse( 1);
         int pageSize = psize.filter( n -> n > 0).orElse( DEFAULT_PAGE_SIZE);
-        log.info( "tags: " + tags + ", currentPage: " + currentPage + ", pageSize: " + pageSize);
+        //log.info( "tags: " + tags + ", currentPage: " + currentPage + ", pageSize: " + pageSize);
 
         String normalizedTags = PostMapper.normalizeTags( tags);
         model.addAttribute( "normalizedTags", normalizedTags);
@@ -62,7 +63,7 @@ public class PostController {
         return "index";
     }
 
-    @PostMapping
+    @PostMapping()
     public String createPost( PostCreateDto post) {
         service.createPost( post);
         return "redirect:/";
@@ -70,13 +71,22 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public String showPost(@PathVariable("postId") long postId, Model model) {
-        log.info( "show post: postId= " + postId);
+        //log.info( "show post: postId= " + postId);
         var post = service.getPost( postId).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
         );
         model.addAttribute( "post", post);
         model.addAttribute( "generatedTime", LocalDateTime.now());
         return "post";
+    }
+
+    @PostMapping("/{postId}")
+    public String updatePost(
+        PostUpdateDto post
+    ) {
+        //log.info( "update post:  dto: " + post);
+        service.updatePost( post);
+        return "redirect:/posts/" + post.getPostId();
     }
 
     @GetMapping("/{postId}/image")

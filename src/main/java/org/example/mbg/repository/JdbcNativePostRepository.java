@@ -191,6 +191,31 @@ public class JdbcNativePostRepository implements PostRepository {
         }
     }
 
+    @Override
+    public void updatePost(Post p) {
+        jdbcTemplate.update(
+                """
+                update
+                    posts
+                set
+                    title = ?,
+                    tags_str = ?,
+                    text = ?
+                where
+                    post_id = ?
+                """,
+                p.getTitle(),
+                p.getTags(),
+                p.getText(),
+                p.getPostId()
+        );
+        mergePostTags( p.getPostId(), p.getTags());
+        Post.Image img = p.getImage();
+        if( img == null || img != null && img.getOrigFilename() != null && ! img.getOrigFilename().isEmpty()) {
+            mergePostImage( p.getPostId(), img);
+        }
+    }
+
 
     private void mergePostTags(@NonNull Long postId, String tags) {
         jdbcTemplate.update(
@@ -258,26 +283,62 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     private void mergePostImage(Long postId, Post.Image image) {
-        byte[] fd = image.getFileData();
+        var img = image != null
+                ? image
+                : Post.Image.builder().origFilename("").contentType( "").fileData( new byte[]{}).build();
+        var fd = img.getFileData();
         jdbcTemplate.execute(
                 """
-                insert into
-                    post_images
-                (
-                    post_id,
-                    orig_filename,
-                    content_type,
-                    file_data
-                )
-                values
-                (?, ?, ?, ?)
+                merge into
+                    post_images d
+                using
+                    (
+                    select
+                        *
+                    from
+                        (
+                        select
+                            ? as post_id,
+                            ? as orig_filename,
+                            ? as content_type,
+                            ? as file_data
+                        ) a
+                    where
+                        coalesce( length( a.orig_filename), 0) > 0
+                    ) s
+                on
+                    d.post_id = s.post_id
+                when not matched then
+                    insert
+                    (
+                        post_id,
+                        orig_filename,
+                        content_type,
+                        file_data
+                    )
+                    values
+                    (
+                        s.post_id,
+                        s.orig_filename,
+                        s.content_type,
+                        s.file_data
+                    )
+                when matched then
+                    update set
+                        orig_filename = s.orig_filename,
+                        content_type = s.content_type,
+                        file_data = s.file_data
+                when not matched by source and
+                        d.post_id = ?
+                    then delete
                 """,
                 new AbstractLobCreatingPreparedStatementCallback(lobHandler) {
                     protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException {
                         ps.setLong(1, postId);
-                        ps.setString(2, image.getOrigFilename());
-                        ps.setString(3, image.getContentType());
+                        ps.setString(2, img.getOrigFilename());
+                        ps.setString(3, img.getContentType());
                         lobCreator.setBlobAsBinaryStream( ps, 4, new ByteArrayInputStream( fd), fd.length);
+                        ps.setLong(5, postId);
                     }
                 }
         );

@@ -1,6 +1,7 @@
 package org.example.mbg.controller;
 
 import org.example.mbg.configuration.WebConfiguration;
+import org.example.mbg.model.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -156,13 +158,7 @@ public class PostControllerTest {
         ;
 
         // Проверяем возврат добавленного изображения
-        mockMvc.perform( get( "/" + START_TEMP_POST_ID + "/image"))
-                //.andDo( print()) // вывод запроса и ответа
-                .andExpect( status().isOk())
-                .andExpect( content().contentType( "image/png"))
-                .andExpect(MockMvcResultMatchers.header().string("Content-Length", String.valueOf( fileData.length)))
-                .andExpect( content().bytes( fileData))
-        ;
+        checkPostImage( START_TEMP_POST_ID, fileData);
     }
 
     @Test
@@ -180,4 +176,120 @@ public class PostControllerTest {
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__comments_count\"]").string( "2"))
         ;
     }
+
+    @Test
+    void updatePost_checkChangeAll() throws Exception {
+        // создаем новый пост
+        mockMvc.perform( multipart( "/")
+                        .file(
+                            new MockMultipartFile(
+                                "file",
+                                "updatePost_checkChangeAll_before.png",
+                                "image/png",
+                                "before_image_data".getBytes( StandardCharsets.UTF_8)
+                            )
+                        )
+                        .param( "title", "updatePost_checkChangeAll")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/"))
+        ;
+
+        byte[] fileData = getClass().getClassLoader().getResourceAsStream(TEST_PNG_IMAGE_PATH).readAllBytes();
+
+        Post p = Post.builder()
+                .postId( START_TEMP_POST_ID)
+                .title( "updatePost_checkChangeAll")
+                .tags( "updatePost_checkChangeAll_tags")
+                .text( "updatePost_checkChangeAll text")
+                .build();
+
+        // обновляем пост
+        mockMvc.perform( multipart( "/{postId}", START_TEMP_POST_ID)
+                    .file(
+                        new MockMultipartFile(
+                            "file",
+                            "updatePost_checkChangeAll_after.png",
+                            "image/png",
+                            fileData
+                        )
+                    )
+                    .param( "title", p.getTitle())
+                    .param( "tags", p.getTags())
+                    .param( "text", p.getText())
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/posts/" + START_TEMP_POST_ID))
+        ;
+
+        // Проверяем основные данные
+        mockMvc.perform( get( "/posts/{postId}", p.getPostId()) )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "text/html;charset=UTF-8"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( p.getTitle()))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( p.getTags()))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__text\"]").string( p.getText()))
+        ;
+
+        // Проверяем возврат обновленного изображения
+        checkPostImage( START_TEMP_POST_ID, fileData);
+    }
+
+
+    @Test
+    void updatePost_checkDeleteImage() throws Exception {
+        Post p = Post.builder()
+                .postId( START_TEMP_POST_ID)
+                .title( "updatePost_checkDeleteImage")
+                .build();
+
+        // создаем новый пост
+        mockMvc.perform( multipart( "/")
+                        .file(
+                                new MockMultipartFile(
+                                        "file",
+                                        "updatePost_checkDeleteImage.png",
+                                        "image/png",
+                                        "image_data".getBytes( StandardCharsets.UTF_8)
+                                )
+                        )
+                        .param( "title", p.getTitle())
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/"))
+        ;
+
+        // обновляем пост
+        mockMvc.perform( multipart( "/{postId}", p.getPostId())
+                        .param( "title", p.getTitle())
+                        .param( "tags", p.getTags())
+                        .param( "text", p.getText())
+                        .param( "delImage", "on")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/posts/" + p.getPostId()))
+        ;
+
+        // проверяем что изображение удалено
+        mockMvc.perform( get( "/{postId}/image", p.getPostId()))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isNotFound())
+        ;
+    }
+
+    private void checkPostImage(long postId, byte[] fileData) throws Exception {
+        mockMvc.perform( get( "/" + postId + "/image"))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "image/png"))
+                .andExpect(MockMvcResultMatchers.header().string("Content-Length", String.valueOf( fileData.length)))
+                .andExpect( content().bytes( fileData))
+        ;
+    }
+
 }

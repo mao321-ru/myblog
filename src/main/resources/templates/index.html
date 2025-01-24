@@ -43,7 +43,7 @@
         <div class="posts">
             <div class="post" th:each="post: ${posts}">
                 <div class="post__header">
-                    <a href="posts/1" th:href="@{|posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
+                    <a href="/posts/1" th:href="@{|/posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
                 </div>
                 <p class="post__preview" th:text="${post.getPreviewText()}">Это замечательное место, которое нужно посетить каждому</p>
                 <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
@@ -92,7 +92,7 @@
                     <textarea class='popup__text' name="text" rows="7" cols="53"></textarea>
                 </li>
                 <li>
-                    <input type="file" name="file" />
+                    <input type="file" name="file" accept="image/*" />
                 </li>
             </ul>
             <button type="button" class='popup__save'>Сохранить</button>

@@ -3,6 +3,7 @@ package org.example.mbg.mapper;
 import lombok.SneakyThrows;
 import org.example.mbg.dto.PostCreateDto;
 import org.example.mbg.dto.PostPreviewDto;
+import org.example.mbg.dto.PostUpdateDto;
 import org.example.mbg.model.Post;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,27 @@ public class PostMapper {
                 .text( pd.getText())
                 .image(
                     f == null || f.isEmpty() ? null
+                        : Post.Image.builder()
+                            .origFilename( f.getOriginalFilename())
+                            .contentType( f.getContentType())
+                            .fileData( f.getBytes())
+                            .build()
+                )
+                .build();
+    }
+
+    @SneakyThrows
+    public static Post toPost(PostUpdateDto pd) {
+        MultipartFile f = pd.getFile();
+        return Post.builder()
+                .postId( pd.getPostId())
+                .title( pd.getTitle())
+                .tags( normalizeTags( pd.getTags()))
+                .text( pd.getText())
+                .image(
+                        // null указывает на удаление изображения
+                        pd.getDelImage() != null && pd.getDelImage() ? null
+                        : f == null || f.isEmpty() ? Post.Image.builder().build()
                         : Post.Image.builder()
                             .origFilename( f.getOriginalFilename())
                             .contentType( f.getContentType())

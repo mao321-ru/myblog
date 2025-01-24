@@ -9,7 +9,11 @@
 <body class="page">
     <header class="header">
         <div class="header__container">
-            <h3 class="header__title"></h3>
+            <h3 class="header__title">
+                <a th:href="@{/}">Мой блог</a>
+                :
+                <span th:text="${post.title}"></span>
+            </h3>
             <div>
                 <button class="header__post-edit"></button>
             </div>
@@ -42,7 +46,7 @@
     <!-- Динамически отображаемая форма редактирования поста -->
     <div class="popup popup_type_add">
         <div class="popup__container">
-            <form class='popup__form' th:action="@{/}" method="POST" enctype="multipart/form-data">
+            <form class='popup__form' th:action="@{|/posts/${post.postId}|}" method="POST" enctype="multipart/form-data">
             <div class="popup__header">
                 <h2 class="popup__title">Редактирование поста</h2>
                 <button type="button" class="popup__close"></button>
@@ -50,18 +54,22 @@
             <ul class='popup__iform'>
                 <li>
                     <p>Заголовок:</p>
-                    <input class='popup__input popup__title_input' name='title'/>
+                    <input class='popup__input popup__title_input' name='title' th:value="${post.title}"/>
                 </li>
                 <li>
                     <p>Теги:</p>
-                    <input class="popup__input" name='tags'/>
+                    <input class="popup__input" name='tags' th:value="${post.tags}"/>
                 </li>
                 <li>
                     <p>Текст:</p>
-                    <textarea class='popup__text' name="text" rows="7" cols="53"></textarea>
+                    <textarea class='popup__text' name="text" rows="7" cols="53" th:text="${post.text}"></textarea>
                 </li>
                 <li>
-                    <input type="file" name="file" />
+                    <input type="file" name="file" accept="image/*" />
+                    <span th:if="${post.isImage}">
+                        <input type="checkbox" name="delImage" />
+                        <label for="delImage">Удалить изображение</label>
+                    </span>
                 </li>
             </ul>
             <button type="button" class='popup__save'>Сохранить</button>
