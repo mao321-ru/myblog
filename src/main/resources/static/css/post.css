@@ -59,6 +59,18 @@
     background: #E0FFFF;
 }
 
+.post__likes_add{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    background-image: url(../images/btn_add_like.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+}
+
 .footer__generated{
     font-size: 80%;
     font-style: italic;

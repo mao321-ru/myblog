@@ -281,6 +281,30 @@ public class PostControllerTest {
         ;
     }
 
+    @Test
+    void addLike_check() throws Exception {
+        // создаем новый пост для теста
+        final long postId = START_TEMP_POST_ID;
+        mockMvc.perform( multipart( "/posts")
+                        .param( "title", "addLike_check")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+        ;
+
+        // добавляем лайк и проверяем результат
+        mockMvc.perform( post( "/posts/{postId}/add-like", postId))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/posts/" + postId))
+        ;
+        mockMvc.perform( get( "/posts/{postId}", postId))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "1"))
+        ;
+    }
+
     private void checkPostImage(long postId, byte[] fileData) throws Exception {
         mockMvc.perform( get( "/posts/{postId}/image", postId))
                 //.andDo( print()) // вывод запроса и ответа

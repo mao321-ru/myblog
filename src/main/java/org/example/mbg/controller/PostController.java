@@ -102,4 +102,10 @@ public class PostController {
         return "redirect:/posts/" + post.getPostId();
     }
 
+    @PostMapping("/posts/{postId}/add-like")
+    public String addLike( @PathVariable long postId) {
+        service.addLikes( postId, 1);
+        return "redirect:/posts/" + postId;
+    }
+
 }

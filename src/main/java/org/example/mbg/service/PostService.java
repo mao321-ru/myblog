@@ -19,4 +19,6 @@ public interface PostService {
     void createPost(PostCreateDto post);
 
     void updatePost(PostUpdateDto post);
+
+    void addLikes(long postId, int i);
 }

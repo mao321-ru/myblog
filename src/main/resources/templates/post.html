@@ -31,9 +31,14 @@
                 <div class="post__image" th:if="${post.isImage}">
                     <img class="post__image_img" th:src="@{|/posts/${post.postId}/image|}" alt="post_image" />
                 </div>
+                <form class='post___likes_form' th:action="@{|/posts/${post.postId}/add-like|}" method="POST">
+                    <div class="post__likes">
+                        <span class="post__likes_text">Лайки:</span>
+                        <span class="post__likes_count" th:text="${post.likesCount}">29</span>
+                        <button class="post__likes_add"></button>
+                    </div>
+                </form>
                 <div class="post__footer">
-                    <span class="post__likes" th:if="${post.likesCount}">Лайки: <span class="post__likes_count" th:text="${post.likesCount}">29</span></span>
-                    <span class="post__comments" th:if="${post.commentsCount}">Комментарии: <span class="post__comments_count" th:text="${post.commentsCount}">50</span></span>
                     <span class="post__date">Добавлено: <span th:text="${#temporals.format(post.createTime,'dd.MM.yyyy HH:mm:ss')}">02.01.2024 18:30:41</span></span>
                 </div>
             </div>

@@ -216,6 +216,21 @@ public class JdbcNativePostRepository implements PostRepository {
         }
     }
 
+    @Override
+    public void addLikes(long postId, int i) {
+        jdbcTemplate.update(
+                """
+                update
+                    posts
+                set
+                    likes_count = coalesce( likes_count, 0) + ?
+                where
+                    post_id = ?
+                """,
+                i,
+                postId
+        );
+    }
 
     private void mergePostTags(@NonNull Long postId, String tags) {
         jdbcTemplate.update(
