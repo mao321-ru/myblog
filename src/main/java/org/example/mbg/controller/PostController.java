@@ -27,14 +27,13 @@ import org.springframework.web.server.ResponseStatusException;
 @Log
 @RequiredArgsConstructor
 @Controller
-@RequestMapping({ "/", "/posts"})
 public class PostController {
 
     private final int DEFAULT_PAGE_SIZE = 50;
 
     private final PostService service;
 
-    @GetMapping
+    @GetMapping({ "/", "/posts"})
     public String findPosts(
         @RequestParam( required = false) String tags,
         @RequestParam Optional<Integer> page,
@@ -63,33 +62,7 @@ public class PostController {
         return "index";
     }
 
-    @PostMapping()
-    public String createPost( PostCreateDto post) {
-        service.createPost( post);
-        return "redirect:/";
-    }
-
-    @GetMapping("/{postId}")
-    public String showPost(@PathVariable("postId") long postId, Model model) {
-        //log.info( "show post: postId= " + postId);
-        var post = service.getPost( postId).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
-        );
-        model.addAttribute( "post", post);
-        model.addAttribute( "generatedTime", LocalDateTime.now());
-        return "post";
-    }
-
-    @PostMapping("/{postId}")
-    public String updatePost(
-        PostUpdateDto post
-    ) {
-        //log.info( "update post:  dto: " + post);
-        service.updatePost( post);
-        return "redirect:/posts/" + post.getPostId();
-    }
-
-    @GetMapping("/{postId}/image")
+    @GetMapping("/posts/{postId}/image")
     @ResponseBody
     public ResponseEntity<InputStreamResource> getPostImage(@PathVariable("postId") long postId) {
         Optional<Post.Image> optImg = service.findPostImage( postId);
@@ -103,6 +76,30 @@ public class PostController {
         else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping( "/posts/{postId}")
+    public String showPost(@PathVariable("postId") long postId, Model model) {
+        //log.info( "show post: postId= " + postId);
+        var post = service.getPost( postId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
+        );
+        model.addAttribute( "post", post);
+        model.addAttribute( "generatedTime", LocalDateTime.now());
+        return "post";
+    }
+
+    @PostMapping( "/posts")
+    public String createPost( PostCreateDto post) {
+        service.createPost( post);
+        return "redirect:/";
+    }
+
+    @PostMapping("/posts/{postId}")
+    public String updatePost( PostUpdateDto post ) {
+        //log.info( "update post:  dto: " + post);
+        service.updatePost( post);
+        return "redirect:/posts/" + post.getPostId();
     }
 
 }

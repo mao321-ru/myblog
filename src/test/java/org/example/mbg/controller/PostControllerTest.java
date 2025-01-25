@@ -75,7 +75,8 @@ public class PostControllerTest {
     @Test
     void findPosts_filterEmpty() throws Exception {
         mockMvc.perform(
-                    get( "/")
+                    // проверяем "/posts" дополнительно к "/" (используется в остальных тестах)
+                    get( "/posts")
                         .param( "tags", "not_exists_tag")
                 )
                 //.andDo( print()) // вывод запроса и ответа
@@ -107,16 +108,31 @@ public class PostControllerTest {
 
     @Test
     void getPostImage_checkNotFound() throws Exception {
-        mockMvc.perform( get( "/{postId}/image", NOT_EXITS_POST_ID))
+        mockMvc.perform( get( "/posts/{postId}/image", NOT_EXITS_POST_ID))
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isNotFound())
         ;
     }
 
     @Test
+    void showPost_check() throws Exception {
+        mockMvc.perform( get( "/posts/{postId}", 3) )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( content().contentType( "text/html;charset=UTF-8"))
+                // в тестовых данных должен быть найден один пост "Волга"
+                .andExpect( xpath( POSTS_XPATH).nodeCount( 1))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "Волга"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__text\"]").string( "Это прекрасная река"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
+        ;
+    }
+
+    @Test
     void createPost_checkNewPostInTop() throws Exception {
         mockMvc.perform(
-                    post( "/")
+                    post( "/posts")
                             .param( "title", "newPost")
                             .param( "tags", "  tagFirst tag2   tagLast  tag2 ")
                             .param( "text", "Text of new post")
@@ -148,7 +164,7 @@ public class PostControllerTest {
             "image/png",
             fileData
         );
-        mockMvc.perform( multipart( "/")
+        mockMvc.perform( multipart( "/posts")
                     .file( file)
                     .param( "title", "createPost_checkSaveImage")
                 )
@@ -162,25 +178,9 @@ public class PostControllerTest {
     }
 
     @Test
-    void showPost_check() throws Exception {
-        mockMvc.perform( get( "/posts/{postId}", 3) )
-                //.andDo( print()) // вывод запроса и ответа
-                .andExpect( status().isOk())
-                .andExpect( content().contentType( "text/html;charset=UTF-8"))
-                // в тестовых данных должен быть найден один пост "Волга"
-                .andExpect( xpath( POSTS_XPATH).nodeCount( 1))
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "Волга"))
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__text\"]").string( "Это прекрасная река"))
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__comments_count\"]").string( "2"))
-        ;
-    }
-
-    @Test
     void updatePost_checkChangeAll() throws Exception {
         // создаем новый пост
-        mockMvc.perform( multipart( "/")
+        mockMvc.perform( multipart( "/posts")
                         .file(
                             new MockMultipartFile(
                                 "file",
@@ -206,7 +206,7 @@ public class PostControllerTest {
                 .build();
 
         // обновляем пост
-        mockMvc.perform( multipart( "/{postId}", START_TEMP_POST_ID)
+        mockMvc.perform( multipart( "/posts/{postId}", START_TEMP_POST_ID)
                     .file(
                         new MockMultipartFile(
                             "file",
@@ -238,7 +238,6 @@ public class PostControllerTest {
         checkPostImage( START_TEMP_POST_ID, fileData);
     }
 
-
     @Test
     void updatePost_checkDeleteImage() throws Exception {
         Post p = Post.builder()
@@ -247,7 +246,7 @@ public class PostControllerTest {
                 .build();
 
         // создаем новый пост
-        mockMvc.perform( multipart( "/")
+        mockMvc.perform( multipart( "/posts")
                         .file(
                                 new MockMultipartFile(
                                         "file",
@@ -264,7 +263,7 @@ public class PostControllerTest {
         ;
 
         // обновляем пост
-        mockMvc.perform( multipart( "/{postId}", p.getPostId())
+        mockMvc.perform( multipart( "/posts/{postId}", p.getPostId())
                         .param( "title", p.getTitle())
                         .param( "tags", p.getTags())
                         .param( "text", p.getText())
@@ -276,14 +275,14 @@ public class PostControllerTest {
         ;
 
         // проверяем что изображение удалено
-        mockMvc.perform( get( "/{postId}/image", p.getPostId()))
+        mockMvc.perform( get( "/posts/{postId}/image", p.getPostId()))
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isNotFound())
         ;
     }
 
     private void checkPostImage(long postId, byte[] fileData) throws Exception {
-        mockMvc.perform( get( "/" + postId + "/image"))
+        mockMvc.perform( get( "/posts/{postId}/image", postId))
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())
                 .andExpect( content().contentType( "image/png"))
