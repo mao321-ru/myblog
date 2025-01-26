@@ -3,6 +3,7 @@ package org.example.mbg.mapper;
 import lombok.SneakyThrows;
 import org.example.mbg.dto.PostCreateDto;
 import org.example.mbg.dto.PostPreviewDto;
+import org.example.mbg.dto.PostShowDto;
 import org.example.mbg.dto.PostUpdateDto;
 import org.example.mbg.model.Post;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +62,18 @@ public class PostMapper {
                 .isImage( p.getImage() != null && p.getImage().getOrigFilename() != null && ! p.getImage().getOrigFilename().isEmpty())
                 .likesCount( p.getLikesCount())
                 .commentsCount( p.getCommentsCount())
+                .createTime( p.getCreateTime())
+                .build();
+    }
+
+    public static PostShowDto toPostShowDto(Post p) {
+        return PostShowDto.builder()
+                .postId( p.getPostId())
+                .title( p.getTitle())
+                .text( p.getText())
+                .tags( p.getTags())
+                .isImage( p.getImage() != null && p.getImage().getOrigFilename() != null && ! p.getImage().getOrigFilename().isEmpty())
+                .likesCount( p.getLikesCount())
                 .createTime( p.getCreateTime())
                 .build();
     }

@@ -42,6 +42,9 @@ public class PostControllerTest {
     // выбор верхнего поста
     private final String TOP_POST_XPATH = POSTS_XPATH + "[1]";
 
+    // выбор элементов списка комментариев
+    private final String POST_COMMENT_XPATH = "//ul[@class=\"comments__list\"]/li";
+
     // Путь к png-картинке для использования в тестах
     private final String TEST_PNG_IMAGE_PATH = "static/images/btn_close_popup.png";
 
@@ -126,6 +129,9 @@ public class PostControllerTest {
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "nice river saratov"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__text\"]").string( "Это прекрасная река"))
                 .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "5"))
+                .andExpect( xpath(  POST_COMMENT_XPATH).nodeCount( 2))
+                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/*[@class=\"comment_text\"]/@value").string( "Красивая река!"))
+                .andExpect( xpath(  POST_COMMENT_XPATH + "[2]/*[@class=\"comment_text\"]/@value").string( "И широкая!"))
         ;
     }
 

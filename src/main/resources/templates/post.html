@@ -38,12 +38,27 @@
                         <button class="post__likes_add"></button>
                     </div>
                 </form>
+
                 <div class="post__footer">
                     <span class="post__date">Добавлено: <span th:text="${#temporals.format(post.createTime,'dd.MM.yyyy HH:mm:ss')}">02.01.2024 18:30:41</span></span>
                 </div>
             </div>
         </div>
     </div>
+
+<ul class="comments__list">
+    <li class="comment" th:each="cmt: ${post.comments}">
+        <input readonly="" class="comment_text" th:value="${cmt.commentText}" />
+        <button class="comment__edit"></button>
+        <button class="comment__delete"></button>
+        <button class="comment__save">Сохранить</button>
+    </li>
+</ul>
+<div class="add__comment">
+    <input placeholder="Введите комментарий" class="add__comment_text"></input>
+    <button class="add__comment_button"></button>
+</div>
+
     <div class="footer">
         <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
     </div>
@@ -81,6 +96,15 @@
             </form>
         </div>
     </div>
+
+<template class="template">
+    <li class="comment">
+        <input readonly="" class="comment_text" />
+        <button class="comment__edit"></button>
+        <button class="comment__delete"></button>
+        <button class="comment__save">Сохранить</button>
+    </li>
+</template>
 
 <script>
     const addPopupPost = document.querySelector('.popup_type_add')
@@ -129,6 +153,27 @@
             }
         }}
         )
+    })
+
+
+    const commentsElement=document.querySelector('.comments__list')
+    const btnAddComment=document.querySelector('.add__comment_button')
+    const inputAddComment = document.querySelector('.add__comment_text')
+    btnAddComment.addEventListener("click", ()=>{
+        const templateComment =document.querySelector('.template').content.querySelector(".comment").cloneNode(true);
+        templateComment.querySelector('.comment_text').value = inputAddComment.value
+        const btnDeleteComment = templateComment.querySelector('.comment__delete')
+        const btnEditComment = templateComment.querySelector('.comment__edit')
+        const btnSaveComment = templateComment.querySelector('.comment__save')
+        commentsElement.appendChild(templateComment)
+        inputAddComment.value=''
+        btnDeleteComment.addEventListener("click", ()=>{
+            templateComment.remove()
+        })
+        btnEditComment.addEventListener("click", ()=>{
+            templateComment.querySelector('.comment_text').removeAttribute('readonly')
+            btnSaveComment.style.display = 'block'
+        })
     })
 </script>
 

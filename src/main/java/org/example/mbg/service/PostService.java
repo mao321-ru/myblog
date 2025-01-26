@@ -2,6 +2,7 @@ package org.example.mbg.service;
 
 import org.example.mbg.dto.PostCreateDto;
 import org.example.mbg.dto.PostPreviewDto;
+import org.example.mbg.dto.PostShowDto;
 import org.example.mbg.dto.PostUpdateDto;
 import org.example.mbg.model.Post;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ public interface PostService {
 
     Optional<Post.Image> findPostImage(long postId);
 
-    Optional<PostPreviewDto> getPost(long postId);
+    Optional<PostShowDto> getPost(long postId);
 
     void createPost(PostCreateDto post);
 

@@ -137,90 +137,79 @@
     margin-left: 15px;
 }
 
-
-
-.fiter__container{
-    display: flex;
-    height: 30px;
-}
-.dropdown {
-    width: 50px;
-    padding-left: 10px;
-}
-
-.dropdown__inform{
-    border-radius: 3px;
-    border: 1px solid #ccc;
-    height: 30px;
-    align-items: center;
-    display: flex;
-    background-color: #f9f9f9;
-    justify-content: space-between;
-}
-.dropdown__text{
-    padding-left: 2px;
-}
-
-.dropdown__button {
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-image: url(../images/strelka_menu_posts.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    cursor: pointer;
-    background-color: #f9f9f9;
-    width: 20px;
-    height: 30px;
-}
-
-.menu {
-    margin: 0;
-    padding: 0;
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    width: 49px;
-    list-style-type: none;
-}
-
-.menu-item {
-    padding: 10px;
-    border-bottom: 1px solid black;
-    cursor: pointer;
-}
-
-.menu-item:hover{
-    opacity: 0.6;
-}
-
-.filter__tag{
-    width: 500px;
-}
-
-.filter__save{
-    padding: 0;
-    margin-left: 10px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    background-color: #f9f9f9;
-    width: 30px;
-    height: 30px;
-}
-
-.filter__lupa{
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    object-position: center;
-    background-color: transparent;
-}
-
-.filter__save:hover{
-    opacity: 0.6;
-}
-
 .post__image_img{
     height: 200px;
+}
+
+
+.add__comment_button{
+    width: 50px;
+    height: 50px;
+    background-image: url(../images/plus.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+}
+
+.add__comment{
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add__comment_text{
+    margin: 0;
+    width: 80%;
+    height: 40px;
+}
+
+.comment__edit{
+    width: 30px;
+    height: 30px;
+    background-image: url(../images/editCommentBtn.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+    margin-right: 40px;
+}
+
+.comments__list{
+    padding: 0;
+    margin-top: 20px;
+    margin: 0 auto;
+    width: 90%;
+    list-style: none;
+    border-bottom: 2px solid blue;
+}
+
+.comment_text{
+    margin: 0;
+    padding: 0;
+    width: 80%;
+    height: 40px;
+    border: none;
+    margin-right: 20px;
+}
+
+.comment__delete{
+    width: 30px;
+    height: 30px;
+    background-image: url(../images/deleteComment.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+}
+
+.comment{
+    border-bottom: 1px solid #7B68EE;
+}
+
+.comment__save{
+    display:none;
 }
