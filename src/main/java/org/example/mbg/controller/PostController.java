@@ -115,11 +115,24 @@ public class PostController {
         return "redirect:/posts/" + postId;
     }
 
-
     @PostMapping("/posts/{postId}/comments")
     public String createComment( @PathVariable long postId, String commentText) {
         //log.info( "create comment: postId:  " + postId + ", commentText: " + commentText);
         service.createComment( postId, commentText);
+        return "redirect:/posts/" + postId;
+    }
+
+    @PostMapping(value = "/posts/{postId}/comments/{commentId}", params = "_method=")
+    public String updateComment( @PathVariable long postId, @PathVariable long commentId, String commentText) {
+        //log.info( "update comment: postId:  " + postId + ", commentId: " + commentId + ", commentText: " + commentText);
+        service.updateComment( postId, commentId, commentText);
+        return "redirect:/posts/" + postId;
+    }
+
+    @PostMapping(value = "/posts/{postId}/comments/{commentId}", params = "_method=delete")
+    public String deleteComment( @PathVariable long postId, @PathVariable long commentId) {
+        //log.info( "delete comment: postId:  " + postId + ", commentId: " + commentId);
+        service.deleteComment( postId, commentId);
         return "redirect:/posts/" + postId;
     }
 

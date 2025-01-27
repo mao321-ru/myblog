@@ -73,4 +73,14 @@ public class PostServiceImpl implements PostService {
         cmtRepo.createComment( postId, commentText);
     }
 
+    @Override
+    public void updateComment(long postId, long commentId, String commentText) {
+        cmtRepo.updateComment( postId, commentId, commentText);
+    }
+
+    @Override
+    public void deleteComment(long postId, long commentId) {
+        cmtRepo.deleteComment( postId, commentId);
+    }
+
 }

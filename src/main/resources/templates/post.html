@@ -50,12 +50,15 @@
         </div>
     </div>
     <ul class="comments__list">
-        <li class="comment" th:each="cmt: ${post.comments}">
-            <input readonly="" class="comment_text" th:value="${cmt.commentText}" />
-            <button class="comment__edit"></button>
-            <button class="comment__delete"></button>
-            <button class="comment__save">Сохранить</button>
-        </li>
+        <form class='comment__list_form' th:each="cmt: ${post.comments}" th:action="@{|/posts/${post.postId}/comments/${cmt.commentId}|}" method="POST">
+            <li class="comment" th:id="${cmt.commentId}">
+                <input readonly="" class="comment_text" th:value="${cmt.commentText}" name="commentText" />
+                <button type="button" class="comment__edit" onclick="toggleCommentBtn( this)"></button>
+                <button type="button" class="comment__delete" onclick="toggleCommentBtn( this)"></button>
+                <button type="button" class="comment__save" onclick="toggleCommentBtn( this)">Сохранить</button>
+            </li>
+            <input class='comment__list_form_method' type="hidden" name="_method" value="" />
+        </form>
     </ul>
     <form class='add__comment_form' th:action="@{|/posts/${post.postId}/comments|}" method="POST">
         <div class="add__comment">
@@ -102,16 +105,26 @@
         </div>
     </div>
 
-<template class="template">
-    <li class="comment">
-        <input readonly="" class="comment_text" />
-        <button class="comment__edit"></button>
-        <button class="comment__delete"></button>
-        <button class="comment__save">Сохранить</button>
-    </li>
-</template>
-
 <script>
+    function toggleCommentBtn( e) {
+        const frm = e.form;
+        const liCmt = e.parentElement;
+        const cmtText = liCmt.querySelector('.comment_text');
+        if ( e.className == "comment__edit") {
+            cmtText.removeAttribute('readonly');
+            liCmt.querySelector('.comment__save').style.display = 'block';
+        }
+        else if ( e.className == "comment__delete") {
+            frm.querySelector('.comment__list_form_method').value = 'delete';
+            frm.submit();
+        }
+        else if ( e.className == "comment__save") {
+            if ( cmtText.value != '') {
+                frm.submit();
+            }
+        }
+    }
+
     const addPopupPost = document.querySelector('.popup_type_add')
     const btnEditPost = document.querySelector('.header__post-edit')
     const btnPopupClose = document.querySelector('.popup__close')

@@ -40,10 +40,10 @@ public class PostControllerTest {
     private final String POSTS_XPATH = "//div[@class=\"post\"]";
 
     // выбор верхнего поста
-    private final String TOP_POST_XPATH = POSTS_XPATH + "[1]";
+    private final String TOP_POST_XPATH = "(" + POSTS_XPATH + ")[1]";
 
     // выбор элементов списка комментариев
-    private final String POST_COMMENT_XPATH = "//ul[@class=\"comments__list\"]/li";
+    private final String POST_COMMENT_XPATH = "(//li[@class=\"comment\"])";
 
     // Путь к png-картинке для использования в тестах
     private final String TEST_PNG_IMAGE_PATH = "static/images/btn_close_popup.png";
@@ -344,7 +344,7 @@ public class PostControllerTest {
         final long postId = createTempPost( "createComment_check");
         final String commentText = "Новый комментарий";
 
-        // добавляем лайк и проверяем результат
+        // добавляем комментарий и проверяем результат
         mockMvc.perform( post( "/posts/{postId}/comments", postId)
                         .param( "commentText", commentText)
                 )
@@ -356,6 +356,50 @@ public class PostControllerTest {
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())
                 .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/*[@class=\"comment_text\"]/@value").string( commentText))
+        ;
+    }
+
+    @Test
+    void updateComment_check() throws Exception {
+        // создаем новый пост с комментарием для теста
+        final long postId = createTempPost( "updateComment_check");
+        final long commentId = createComment( postId, "Старый комментарий");
+        final String commentText = "Новый комментарий";
+
+        // меняем комментарий и проверяем результат
+        mockMvc.perform( post( "/posts/{postId}/comments/{commentId}", postId, commentId)
+                    .param( "_method", "")
+                    .param( "commentText", commentText)
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/posts/" + postId))
+        ;
+        mockMvc.perform( get( "/posts/{postId}", postId))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/*[@class=\"comment_text\"]/@value").string( commentText))
+        ;
+    }
+
+    @Test
+    void deleteComment_check() throws Exception {
+        // создаем новый пост с комментарием для теста
+        final long postId = createTempPost( "deleteComment_check");
+        final long commentId = createComment( postId, "Ненужный комментарий");
+
+        // меняем комментарий и проверяем результат
+        mockMvc.perform( post( "/posts/{postId}/comments/{commentId}", postId, commentId)
+                        .param( "_method", "delete")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/posts/" + postId))
+        ;
+        mockMvc.perform( get( "/posts/{postId}", postId))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( xpath( POST_COMMENT_XPATH).nodeCount( 0))
         ;
     }
 
@@ -378,4 +422,12 @@ public class PostControllerTest {
         return START_TEMP_POST_ID;
     }
 
+    private long createComment(long postId, String commentText) throws Exception {
+        mockMvc.perform( post( "/posts/{postId}/comments", postId)
+                        .param( "commentText", commentText)
+                )
+                .andExpect( status().isFound())
+        ;
+        return START_TEMP_POST_ID;
+    }
 }
