@@ -30,7 +30,7 @@
                 <div class="post__header">
                     <p class="post__title" th:text="${post.title}">Байкал</p>
                 </div>
-                <p class="post__text" th:text="${post.text}">Это замечательное место, которое нужно посетить каждому</p>
+                <p class="post__text" th:utext="${#strings.replace(#strings.escapeXml(post.text),'&#10;','&lt;br /&gt;')}">Это замечательное место, которое нужно посетить каждому</p>
                 <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
                 <div class="post__image" th:if="${post.isImage}">
                     <img class="post__image_img" th:src="@{|/posts/${post.postId}/image|}" alt="post_image" />

@@ -45,7 +45,7 @@
                 <div class="post__header">
                     <a href="/posts/1" th:href="@{|/posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
                 </div>
-                <p class="post__preview" th:text="${post.getPreviewText()}">Это замечательное место, которое нужно посетить каждому</p>
+                <p class="post__preview" th:utext="${#strings.replace(#strings.escapeXml(post.getPreviewText()),'&#10;','&lt;br /&gt;')}">Это замечательное место, которое нужно посетить каждому</p>
                 <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
                 <div class="post__image" th:if="${post.isImage}">
                     <img class="post__image_img" th:src="@{|/posts/${post.postId}/image|}" alt="post_image" />
