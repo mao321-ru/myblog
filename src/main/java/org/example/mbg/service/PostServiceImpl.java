@@ -68,4 +68,9 @@ public class PostServiceImpl implements PostService {
         repo.deletePost( postId);
     }
 
+    @Override
+    public void createComment(long postId, String commentText) {
+        cmtRepo.createComment( postId, commentText);
+    }
+
 }

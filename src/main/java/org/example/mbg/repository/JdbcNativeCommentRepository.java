@@ -38,4 +38,9 @@ public class JdbcNativeCommentRepository implements CommentRepository {
                 postId
             );
     }
+
+    @Override
+    public void createComment(long postId, String commentText) {
+        jdbcTemplate.update( "insert into post_comments ( post_id, comment_text) values ( ?, ?)", postId, commentText);
+    }
 }

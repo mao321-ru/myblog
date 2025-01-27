@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface CommentRepository {
     List<Comment> findByPostId(long postId);
+
+    public void createComment(long postId, String commentText);
+
 }

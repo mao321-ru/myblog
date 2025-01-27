@@ -115,4 +115,12 @@ public class PostController {
         return "redirect:/posts/" + postId;
     }
 
+
+    @PostMapping("/posts/{postId}/comments")
+    public String createComment( @PathVariable long postId, String commentText) {
+        //log.info( "create comment: postId:  " + postId + ", commentText: " + commentText);
+        service.createComment( postId, commentText);
+        return "redirect:/posts/" + postId;
+    }
+
 }

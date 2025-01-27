@@ -323,13 +323,7 @@ public class PostControllerTest {
     @Test
     void addLike_check() throws Exception {
         // создаем новый пост для теста
-        final long postId = START_TEMP_POST_ID;
-        mockMvc.perform( multipart( "/posts")
-                        .param( "title", "addLike_check")
-                )
-                //.andDo( print()) // вывод запроса и ответа
-                .andExpect( status().isFound())
-        ;
+        final long postId = createTempPost( "addLike_check");
 
         // добавляем лайк и проверяем результат
         mockMvc.perform( post( "/posts/{postId}/add-like", postId))
@@ -344,6 +338,27 @@ public class PostControllerTest {
         ;
     }
 
+    @Test
+    void createComment_check() throws Exception {
+        // создаем новый пост для теста
+        final long postId = createTempPost( "createComment_check");
+        final String commentText = "Новый комментарий";
+
+        // добавляем лайк и проверяем результат
+        mockMvc.perform( post( "/posts/{postId}/comments", postId)
+                        .param( "commentText", commentText)
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/posts/" + postId))
+        ;
+        mockMvc.perform( get( "/posts/{postId}", postId))
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isOk())
+                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/*[@class=\"comment_text\"]/@value").string( commentText))
+        ;
+    }
+
     private void checkPostImage(long postId, byte[] fileData) throws Exception {
         mockMvc.perform( get( "/posts/{postId}/image", postId))
                 //.andDo( print()) // вывод запроса и ответа
@@ -352,6 +367,15 @@ public class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.header().string("Content-Length", String.valueOf( fileData.length)))
                 .andExpect( content().bytes( fileData))
         ;
+    }
+
+    private long createTempPost( String title) throws Exception {
+        mockMvc.perform( multipart( "/posts")
+                    .param( "title", title)
+                )
+                .andExpect( status().isFound())
+        ;
+        return START_TEMP_POST_ID;
     }
 
 }

@@ -57,10 +57,12 @@
             <button class="comment__save">Сохранить</button>
         </li>
     </ul>
-    <div class="add__comment">
-        <input placeholder="Введите комментарий" class="add__comment_text"></input>
-        <button class="add__comment_button"></button>
-    </div>
+    <form class='add__comment_form' th:action="@{|/posts/${post.postId}/comments|}" method="POST">
+        <div class="add__comment">
+            <input placeholder="Введите комментарий" class="add__comment_text" name="commentText"></input>
+            <button class="add__comment_button"></button>
+        </div>
+    </form>
     <div class="footer">
         <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
     </div>
@@ -169,24 +171,15 @@
 
 
     // Комментарии
-    const commentsElement=document.querySelector('.comments__list')
     const btnAddComment=document.querySelector('.add__comment_button')
     const inputAddComment = document.querySelector('.add__comment_text')
-    btnAddComment.addEventListener("click", ()=>{
-        const templateComment =document.querySelector('.template').content.querySelector(".comment").cloneNode(true);
-        templateComment.querySelector('.comment_text').value = inputAddComment.value
-        const btnDeleteComment = templateComment.querySelector('.comment__delete')
-        const btnEditComment = templateComment.querySelector('.comment__edit')
-        const btnSaveComment = templateComment.querySelector('.comment__save')
-        commentsElement.appendChild(templateComment)
-        inputAddComment.value=''
-        btnDeleteComment.addEventListener("click", ()=>{
-            templateComment.remove()
-        })
-        btnEditComment.addEventListener("click", ()=>{
-            templateComment.querySelector('.comment_text').removeAttribute('readonly')
-            btnSaveComment.style.display = 'block'
-        })
+    const frmAddComment = document.querySelector('.add__comment_form')
+
+    btnAddComment.addEventListener("click", (e)=>{
+        e.preventDefault();
+        if ( inputAddComment.value) {
+            frmAddComment.submit();
+        }
     })
 </script>
 

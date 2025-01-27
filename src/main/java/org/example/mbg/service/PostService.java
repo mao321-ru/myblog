@@ -24,4 +24,7 @@ public interface PostService {
     void addLikes(long postId, int i);
 
     void deletePost(long postId);
+
+    void createComment( long postId, String commentText);
+
 }
