@@ -221,6 +221,7 @@ public class PostControllerTest {
                             fileData
                         )
                     )
+                    .param( "_method", "")
                     .param( "title", p.getTitle())
                     .param( "tags", p.getTags())
                     .param( "text", p.getText())
@@ -270,6 +271,7 @@ public class PostControllerTest {
 
         // обновляем пост
         mockMvc.perform( multipart( "/posts/{postId}", p.getPostId())
+                        .param( "_method", "")
                         .param( "title", p.getTitle())
                         .param( "tags", p.getTags())
                         .param( "text", p.getText())
@@ -283,6 +285,37 @@ public class PostControllerTest {
         // проверяем что изображение удалено
         mockMvc.perform( get( "/posts/{postId}/image", p.getPostId()))
                 //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isNotFound())
+        ;
+    }
+
+    @Test
+    void deletePost_check() throws Exception {
+        final long postId = START_TEMP_POST_ID;
+
+        // создаем новый пост
+        mockMvc.perform( post( "/posts")
+                    .param( "title", "deletePost_check")
+                    .param( "tags", "deletePost_check_tag")
+                )
+                .andExpect( status().isFound())
+        ;
+
+        // Проверяем что пост стал выводиться
+        mockMvc.perform( get( "/posts/{postId}", postId))
+                .andExpect( status().isOk())
+        ;
+
+        // Удаляем пост
+        mockMvc.perform( post( "/posts/{postId}", postId)
+                    .param( "_method", "delete")
+                )
+                //.andDo( print()) // вывод запроса и ответа
+                .andExpect( status().isFound())
+                .andExpect( redirectedUrl( "/"));
+
+        // Проверяем что пост перестал выводиться
+        mockMvc.perform( get( "/posts/{postId}", postId))
                 .andExpect( status().isNotFound())
         ;
     }

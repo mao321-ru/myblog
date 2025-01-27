@@ -232,6 +232,14 @@ public class JdbcNativePostRepository implements PostRepository {
         );
     }
 
+    @Override
+    public void deletePost(long postId) {
+        jdbcTemplate.update( "delete from post_comments where post_id = ?", postId);
+        jdbcTemplate.update( "delete from post_images where post_id = ?", postId);
+        jdbcTemplate.update( "delete from post_tags where post_id = ?", postId);
+        jdbcTemplate.update( "delete from posts where post_id = ?", postId);
+    }
+
     private void mergePostTags(@NonNull Long postId, String tags) {
         jdbcTemplate.update(
                 """

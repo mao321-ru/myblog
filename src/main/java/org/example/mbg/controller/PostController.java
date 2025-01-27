@@ -95,11 +95,18 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/posts/{postId}")
+    @PostMapping(value = "/posts/{postId}", params = "_method=")
     public String updatePost( PostUpdateDto post ) {
         //log.info( "update post:  dto: " + post);
         service.updatePost( post);
         return "redirect:/posts/" + post.getPostId();
+    }
+
+    @PostMapping(value = "/posts/{postId}", params = "_method=delete")
+    public String deletePost( @PathVariable long postId) {
+        //log.info( "delete post:  " + postId);
+        service.deletePost( postId);
+        return "redirect:/";
     }
 
     @PostMapping("/posts/{postId}/add-like")

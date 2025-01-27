@@ -14,9 +14,13 @@
                 :
                 <span th:text="${post.title}"></span>
             </h3>
-            <div>
-                <button class="header__post-edit"></button>
-            </div>
+            <form class='header__post_delete_form' th:action="@{|/posts/${post.postId}|}" method="POST">
+                <div>
+                    <input type="hidden" name="_method" value="delete" />
+                    <button class="header__post-edit"></button>
+                    <button class="header__post_delete"></button>
+                </div>
+            </form>
         </div>
     </header>
     <div class="lenta">
@@ -45,20 +49,18 @@
             </div>
         </div>
     </div>
-
-<ul class="comments__list">
-    <li class="comment" th:each="cmt: ${post.comments}">
-        <input readonly="" class="comment_text" th:value="${cmt.commentText}" />
-        <button class="comment__edit"></button>
-        <button class="comment__delete"></button>
-        <button class="comment__save">Сохранить</button>
-    </li>
-</ul>
-<div class="add__comment">
-    <input placeholder="Введите комментарий" class="add__comment_text"></input>
-    <button class="add__comment_button"></button>
-</div>
-
+    <ul class="comments__list">
+        <li class="comment" th:each="cmt: ${post.comments}">
+            <input readonly="" class="comment_text" th:value="${cmt.commentText}" />
+            <button class="comment__edit"></button>
+            <button class="comment__delete"></button>
+            <button class="comment__save">Сохранить</button>
+        </li>
+    </ul>
+    <div class="add__comment">
+        <input placeholder="Введите комментарий" class="add__comment_text"></input>
+        <button class="add__comment_button"></button>
+    </div>
     <div class="footer">
         <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
     </div>
@@ -93,6 +95,7 @@
                 </li>
             </ul>
             <button type="button" class='popup__save'>Сохранить</button>
+            <input type="hidden" name="_method" value="" />
             </form>
         </div>
     </div>
@@ -116,6 +119,9 @@
     const btnPopupSave = document.querySelector('.popup__save')
     const frmAddPost = document.querySelector('.popup__form')
     const inputsPopup = document.querySelectorAll('.popup__input')
+
+    const btnDeletePost = document.querySelector('.header__post_delete')
+    const frmDeletePost = document.querySelector('.header__post_delete_form')
 
     // Форма редактирования поста
 
@@ -155,7 +161,14 @@
         )
     })
 
+    // Удаляем пост
+    btnDeletePost.addEventListener('click', (e) => {
+        e.preventDefault();
+        frmDeletePost.submit();
+    })
 
+
+    // Комментарии
     const commentsElement=document.querySelector('.comments__list')
     const btnAddComment=document.querySelector('.add__comment_button')
     const inputAddComment = document.querySelector('.add__comment_text')
