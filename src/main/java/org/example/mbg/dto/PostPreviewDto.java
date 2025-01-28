@@ -22,6 +22,8 @@ public class PostPreviewDto {
     private final LocalDateTime createTime;
 
     public String getPreviewText() {
-        return text;
+        int i = text == null ? -1 : text.indexOf( '\n');
+        return i == -1 ? text : text.substring( 0, i);
     }
+
 }
