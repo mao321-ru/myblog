@@ -1,6 +1,7 @@
 package org.example.mbg.repository;
 
 import org.example.mbg.configuration.DataSourceConfiguration;
+import org.example.mbg.configuration.TestConfiguration;
 import org.example.mbg.model.Post;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,12 @@ import java.util.Optional;
 
 import static org.springframework.test.util.AssertionErrors.*;
 
-@SpringJUnitConfig( classes = { DataSourceConfiguration.class, JdbcNativePostRepository.class})
-@TestPropertySource( locations = "classpath:test-application.properties")
+@SpringJUnitConfig( classes = {
+    DataSourceConfiguration.class,
+    JdbcNativePostRepository.class,
+    // указан последним чтобы тестовые свойства перекрывали свойства по умолчанию
+    TestConfiguration.class
+})
 // расскомментировать для перезаливки тестовых данных
 //@Sql( scripts = {"/clear-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 @Sql( scripts = {"/clear-temp-data.sql", "/test-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )

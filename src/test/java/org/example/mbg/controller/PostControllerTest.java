@@ -1,5 +1,6 @@
 package org.example.mbg.controller;
 
+import org.example.mbg.configuration.TestConfiguration;
 import org.example.mbg.configuration.WebConfiguration;
 import org.example.mbg.model.Post;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitWebConfig( classes = { WebConfiguration.class})
-@TestPropertySource( locations = "classpath:test-application.properties")
+@SpringJUnitWebConfig( classes = {
+    WebConfiguration.class,
+    // указан последним чтобы тестовые свойства перекрывали свойства по умолчанию
+    TestConfiguration.class
+})
 // расскомментировать для пересоздания объектов схемы
 //@Sql( scripts = {"/uninstall.sql", "/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 // расскомментировать для перезаливки тестовых данных
