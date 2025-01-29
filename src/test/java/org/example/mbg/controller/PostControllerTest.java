@@ -1,32 +1,34 @@
 package org.example.mbg.controller;
 
-import org.example.mbg.configuration.TestConfiguration;
+import org.example.mbg.configuration.TestDataSourceConfiguration;
 import org.example.mbg.configuration.WebConfiguration;
 import org.example.mbg.model.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitWebConfig( classes = {
-    WebConfiguration.class,
-    // указан последним чтобы тестовые свойства перекрывали свойства по умолчанию
-    TestConfiguration.class
+@ExtendWith( SpringExtension.class)
+@WebAppConfiguration
+@ContextHierarchy({
+        @ContextConfiguration(name = "data", classes = { TestDataSourceConfiguration.class}),
+        @ContextConfiguration(name = "web", classes = { WebConfiguration.class })
 })
 // расскомментировать для пересоздания объектов схемы
 //@Sql( scripts = {"/uninstall.sql", "/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )

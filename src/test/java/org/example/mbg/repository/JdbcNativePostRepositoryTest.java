@@ -1,25 +1,25 @@
 package org.example.mbg.repository;
 
-import org.example.mbg.configuration.DataSourceConfiguration;
-import org.example.mbg.configuration.TestConfiguration;
+import org.example.mbg.configuration.TestDataSourceConfiguration;
 import org.example.mbg.model.Post;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static org.springframework.test.util.AssertionErrors.*;
 
-@SpringJUnitConfig( classes = {
-    DataSourceConfiguration.class,
-    JdbcNativePostRepository.class,
-    // указан последним чтобы тестовые свойства перекрывали свойства по умолчанию
-    TestConfiguration.class
+@ExtendWith( SpringExtension.class)
+@ContextHierarchy({
+        @ContextConfiguration(name = "data", classes = { TestDataSourceConfiguration.class}),
+        @ContextConfiguration(name = "repo", classes = { JdbcNativePostRepository.class})
 })
 // расскомментировать для перезаливки тестовых данных
 //@Sql( scripts = {"/clear-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
