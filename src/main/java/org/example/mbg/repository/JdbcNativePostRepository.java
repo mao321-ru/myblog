@@ -16,6 +16,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.sql.PreparedStatement;
@@ -165,6 +166,7 @@ public class JdbcNativePostRepository implements PostRepository {
         return lst.stream().findFirst();
     }
 
+    @Transactional
     @Override
     public void createPost(Post p) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -191,6 +193,7 @@ public class JdbcNativePostRepository implements PostRepository {
         }
     }
 
+    @Transactional
     @Override
     public void updatePost(Post p) {
         jdbcTemplate.update(
@@ -232,6 +235,7 @@ public class JdbcNativePostRepository implements PostRepository {
         );
     }
 
+    @Transactional
     @Override
     public void deletePost(long postId) {
         jdbcTemplate.update( "delete from post_comments where post_id = ?", postId);

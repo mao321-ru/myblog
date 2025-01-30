@@ -31,6 +31,9 @@ public class JdbcNativePostRepositoryTest {
     // число постов в тестовых данных
     private final int TEST_POSTS_COUNT = 4;
 
+    // post_id первого поста, созданного при выполнении теста
+    private final long START_TEMP_POST_ID = 1001L;
+
     @Autowired
     private PostRepository repo;
 
@@ -82,5 +85,22 @@ public class JdbcNativePostRepositoryTest {
             Post fp = foundPosts.getFirst();
             assertEquals( "Incorrect title", post.getTitle(), fp.getTitle());
         }
+    }
+
+    @Test
+    void createPost_check() {
+        Post post = Post.builder()
+                .title( "createPost_check")
+                .tags( "createPost_check_tag")
+                .build();
+        repo.createPost(post);
+        repo.findById( START_TEMP_POST_ID)
+            .ifPresentOrElse(
+                ( p) -> {
+                    assertEquals( "Incorrect post title", post.getTitle(), p.getTitle());
+                    assertEquals( "Incorrect post tag" , post.getTags(), p.getTags());
+                },
+                () -> assertTrue( "New post not found by id: " + START_TEMP_POST_ID, false)
+            );
     }
 }
