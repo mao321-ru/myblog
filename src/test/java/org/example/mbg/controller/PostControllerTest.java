@@ -333,24 +333,6 @@ public class PostControllerTest {
     }
 
     @Test
-    void addLike_check() throws Exception {
-        // создаем новый пост для теста
-        final long postId = createTempPost( "addLike_check");
-
-        // добавляем лайк и проверяем результат
-        mockMvc.perform( post( "/posts/{postId}/add-like", postId))
-                //.andDo( print()) // вывод запроса и ответа
-                .andExpect( status().isFound())
-                .andExpect( redirectedUrl( "/posts/" + postId))
-        ;
-        mockMvc.perform( get( "/posts/{postId}", postId))
-                //.andDo( print()) // вывод запроса и ответа
-                .andExpect( status().isOk())
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__likes_count\"]").string( "1"))
-        ;
-    }
-
-    @Test
     void createComment_check() throws Exception {
         // создаем новый пост для теста
         final long postId = createTempPost( "createComment_check");

@@ -59,11 +59,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void addLikes(long postId, int i) {
-        repo.addLikes( postId, i);
-    }
-
-    @Override
     public void deletePost(long postId) {
         repo.deletePost( postId);
     }

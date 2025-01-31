@@ -109,12 +109,6 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/posts/{postId}/add-like")
-    public String addLike( @PathVariable long postId) {
-        service.addLikes( postId, 1);
-        return "redirect:/posts/" + postId;
-    }
-
     @PostMapping("/posts/{postId}/comments")
     public String createComment( @PathVariable long postId, String commentText) {
         //log.info( "create comment: postId:  " + postId + ", commentText: " + commentText);
