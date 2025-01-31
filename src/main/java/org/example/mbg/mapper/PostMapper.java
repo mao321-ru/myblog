@@ -53,11 +53,30 @@ public class PostMapper {
                 .build();
     }
 
+    // Возвращает текст превью: максимум 3 строки первого абзаца
+    public static String getPreviewText( String text) {
+        final int MAX_PREVIEW_LEN = 80 * 3;
+        final char PARAGRAPH_SEPARATOR = '\n';
+
+        boolean isMark = false;
+        int previewLen = -1;
+        if ( text != null) {
+            previewLen = text.indexOf( PARAGRAPH_SEPARATOR);
+            if ( previewLen > MAX_PREVIEW_LEN || previewLen == -1 && text.length() > MAX_PREVIEW_LEN) {
+                previewLen = MAX_PREVIEW_LEN;
+                isMark = true;
+            }
+        }
+        return previewLen == -1
+                ? text
+                : text.substring( 0, previewLen) + ( isMark ? "..." : "");
+    }
+
     public static PostPreviewDto toPostPreviewDto(Post p) {
         return PostPreviewDto.builder()
                 .postId( p.getPostId())
                 .title( p.getTitle())
-                .text( p.getText())
+                .previewText( getPreviewText( p.getText()))
                 .tags( p.getTags())
                 .isImage( p.getImage() != null && p.getImage().getOrigFilename() != null && ! p.getImage().getOrigFilename().isEmpty())
                 .likesCount( p.getLikesCount())

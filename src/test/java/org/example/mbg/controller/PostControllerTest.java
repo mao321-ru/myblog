@@ -147,7 +147,10 @@ public class PostControllerTest {
                     post( "/posts")
                             .param( "title", "newPost")
                             .param( "tags", "  tagFirst tag2   tagLast  tag2 ")
-                            .param( "text", "Text of new post")
+                            .param(
+                                "text",
+                                "Первый абзац поста (попадает в превью).\nОстальной текст поста."
+                            )
                 )
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isFound())
@@ -160,10 +163,13 @@ public class PostControllerTest {
                 .andExpect( status().isOk())
                 .andExpect( content().contentType( "text/html;charset=UTF-8"))
                 // проверка вывода данных нового поста
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]").string( "newPost"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__title\"]")
+                        .string( "newPost"))
                 // для тегов проверяем нормализацию пробелов и сохранение исходного порядка
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]").string( "tagFirst tag2 tagLast"))
-                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__preview\"]").string( "Text of new post"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__tags\"]")
+                        .string( "tagFirst tag2 tagLast"))
+                .andExpect( xpath( TOP_POST_XPATH + "//*[@class=\"post__preview\"]")
+                        .string( "Первый абзац поста (попадает в превью)."))
         ;
     }
 

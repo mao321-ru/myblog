@@ -2,11 +2,8 @@ package org.example.mbg.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import org.example.mbg.model.Post;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 
 @Builder
@@ -14,16 +11,10 @@ import java.util.stream.Collectors;
 public class PostPreviewDto {
     private final Long postId;
     private final String title;
-    private final String text;
+    private final String previewText;
     private final String tags;
     private final boolean isImage;
     private final int likesCount;
     private final int commentsCount;
     private final LocalDateTime createTime;
-
-    public String getPreviewText() {
-        int i = text == null ? -1 : text.indexOf( '\n');
-        return i == -1 ? text : text.substring( 0, i);
-    }
-
 }

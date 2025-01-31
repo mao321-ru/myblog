@@ -19,8 +19,4 @@ public class PostShowDto {
     private final int likesCount;
     @Builder.Default List<CommentDto> comments = new ArrayList<>();
     private final LocalDateTime createTime;
-
-    public String getPreviewText() {
-        return text;
-    }
 }
