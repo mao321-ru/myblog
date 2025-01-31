@@ -103,4 +103,25 @@ public class JdbcNativePostRepositoryTest {
                 () -> assertTrue( "New post not found by id: " + START_TEMP_POST_ID, false)
             );
     }
+
+    @Test
+    void updatePost_checkChangeTag() {
+        Post post = Post.builder()
+                .title( "updatePost_checkChangeTag")
+                .tags( "updatePost_checkChangeTag_oldTag")
+                .build();
+        repo.createPost(post);
+        var foundPosts = repo.findByTags( post.getTags(), PageRequest.of( 0, 1000)).toList();
+        assertEquals( "Incorrect number of posts found by old tag", foundPosts.size(), 1);
+        if( foundPosts.size() == 1) {
+            String oldTag = post.getTags();
+            post.setTags( "updatePost_checkChangeTag_newTag");
+            repo.updatePost( post);
+            foundPosts = repo.findByTags( post.getTags(), PageRequest.of( 0, 1000)).toList();
+            assertEquals( "Incorrect number of posts found by new tag", foundPosts.size(), 1);
+            foundPosts = repo.findByTags( oldTag, PageRequest.of( 0, 1000)).toList();
+            assertEquals( "Post found by old (deleted) tag", foundPosts.size(), 0);
+        }
+    }
+
 }

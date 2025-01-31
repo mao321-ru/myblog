@@ -152,7 +152,14 @@ public class JdbcNativePostRepository implements PostRepository {
     public Optional<Post.Image> findPostImage(long postId) {
         List<Post.Image> lst = jdbcTemplate.query(
                 """
-                select orig_filename, content_type, file_data from post_images where post_id = ?
+                select
+                    t.orig_filename,
+                    t.content_type,
+                    t.file_data
+                from
+                    post_images t
+                where
+                    t.post_id = ?
                 """,
                 ( rs, rownum) -> {
                     return Post.Image.builder()
@@ -199,13 +206,13 @@ public class JdbcNativePostRepository implements PostRepository {
         jdbcTemplate.update(
                 """
                 update
-                    posts
+                    posts p
                 set
                     title = ?,
                     tags_str = ?,
                     text = ?
                 where
-                    post_id = ?
+                    p.post_id = ?
                 """,
                 p.getTitle(),
                 p.getTags(),
@@ -224,11 +231,11 @@ public class JdbcNativePostRepository implements PostRepository {
         jdbcTemplate.update(
                 """
                 update
-                    posts
+                    posts p
                 set
-                    likes_count = coalesce( likes_count, 0) + ?
+                    likes_count = coalesce( p.likes_count, 0) + ?
                 where
-                    post_id = ?
+                    p.post_id = ?
                 """,
                 i,
                 postId
@@ -253,13 +260,13 @@ public class JdbcNativePostRepository implements PostRepository {
                     tag_name
                 )
                 select
-                    tag_name
+                    s.tag_name
                 from
-                    ( select string_to_table( ?, ' ') as tag_name)
+                    ( select string_to_table( ?, ' ') as tag_name) s
                 group by
-                    tag_name
+                    s.tag_name
                 having
-                    tag_name not in
+                    s.tag_name not in
                         (
                         select
                             t.tag_name
