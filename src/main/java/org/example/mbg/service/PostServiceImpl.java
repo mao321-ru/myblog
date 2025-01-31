@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,21 +60,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(long postId) {
         repo.deletePost( postId);
-    }
-
-    @Override
-    public void createComment(long postId, String commentText) {
-        cmtRepo.createComment( postId, commentText);
-    }
-
-    @Override
-    public void updateComment(long postId, long commentId, String commentText) {
-        cmtRepo.updateComment( postId, commentId, commentText);
-    }
-
-    @Override
-    public void deleteComment(long postId, long commentId) {
-        cmtRepo.deleteComment( postId, commentId);
     }
 
 }
