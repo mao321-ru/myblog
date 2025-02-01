@@ -27,6 +27,8 @@ public class JdbcNativeCommentRepository implements CommentRepository {
                     post_comments t
                 where
                     t.post_id = ?
+                order by
+                    t.comment_id
                 """,
                 ( rs, rownum ) -> {
                     return Comment.builder()
