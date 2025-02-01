@@ -1,22 +1,3 @@
-function toggleCommentBtn( e) {
-    const frm = e.form;
-    const liCmt = e.parentElement;
-    const cmtText = liCmt.querySelector('.comment_text');
-    if ( e.className == "comment__edit") {
-        cmtText.removeAttribute('readonly');
-        liCmt.querySelector('.comment__save').style.display = 'block';
-    }
-    else if ( e.className == "comment__delete") {
-        frm.querySelector('.comment__list_form_method').value = 'delete';
-        frm.submit();
-    }
-    else if ( e.className == "comment__save") {
-        if ( cmtText.value != '') {
-            frm.submit();
-        }
-    }
-}
-
 const addPopupPost = document.querySelector('.popup_type_add')
 const btnEditPost = document.querySelector('.header__post-edit')
 const btnPopupClose = document.querySelector('.popup__close')
@@ -86,3 +67,46 @@ btnAddComment.addEventListener("click", (e)=>{
         frmAddComment.submit();
     }
 })
+
+// отправка комментария по нажатии на Enter (возможно с любыми модификторами, например Alt / Ctrl)
+inputAddComment.addEventListener('keydown', function(e) {
+    if ( e.keyCode === 13) {
+        e.preventDefault();
+        if ( inputAddComment.value) {
+            frmAddComment.submit();
+        }
+    }
+})
+
+function handleEditCommentClick( e) {
+    const frm = e.form;
+    const liCmt = e.parentElement;
+    const btnSave = liCmt.querySelector('.comment__save');
+    const cmtText = liCmt.querySelector('.comment_text');
+    if ( btnSave.style.display !== 'block') {
+        cmtText.removeAttribute('readonly');
+        cmtText.addEventListener('keydown', function(e) {
+            if ( e.keyCode === 13) {
+                if ( cmtText.value) {
+                    frm.submit();
+                }
+            }
+        })
+        btnSave.style.display = 'block';
+    }
+}
+
+function handleDeleteCommentClick( e) {
+    const frm = e.form;
+    frm.querySelector('.comment__list_form_method').value = 'delete';
+    frm.submit();
+}
+
+function handleSaveCommentClick( e) {
+    const frm = e.form;
+    const liCmt = e.parentElement;
+    const cmtText = liCmt.querySelector('.comment_text');
+    if ( cmtText.value != '') {
+        frm.submit();
+    }
+}

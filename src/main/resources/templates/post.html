@@ -53,9 +53,9 @@
         <form class='comment__list_form' th:each="cmt: ${post.comments}" th:action="@{|/posts/${post.postId}/comments/${cmt.commentId}|}" method="POST">
             <li class="comment" th:id="${cmt.commentId}">
                 <input readonly="" class="comment_text" th:value="${cmt.commentText}" name="commentText" />
-                <button type="button" class="comment__edit" onclick="toggleCommentBtn( this)"></button>
-                <button type="button" class="comment__delete" onclick="toggleCommentBtn( this)"></button>
-                <button type="button" class="comment__save" onclick="toggleCommentBtn( this)">Сохранить</button>
+                <button type="button" class="comment__edit" onclick="handleEditCommentClick( this)"></button>
+                <button type="button" class="comment__delete" onclick="handleDeleteCommentClick( this)"></button>
+                <button type="button" class="comment__save" onclick="handleSaveCommentClick( this)">Сохранить</button>
             </li>
             <input class='comment__list_form_method' type="hidden" name="_method" value="" />
         </form>
