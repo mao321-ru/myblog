@@ -21,6 +21,8 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/css/");
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/scripts/**")
+                .addResourceLocations("classpath:/static/scripts/");
     }
 
 	@Bean
