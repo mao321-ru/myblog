@@ -40,9 +40,18 @@
   psql postgresql://myblogdev@localhost:5432/postgres -f src/main/db/myblogdb.sql
 ```
 
+- создать тестовую БД в PostgreSQL для использования в автотестах при сборке приложения
+
+Пример создания БД myblogdb_test для пользователя myblogdev скриптом src/test/db/myblogdb_test.sql:
+
+```cmd
+  psql postgresql://myblogdev@localhost:5432/postgres -f src/test/db/myblogdb_test.sql
+```
+
 - собрать war-файл приложения
 
-Параметры подключения к БД указаны в файле src/main/resources/application.properties, при необходимости их можно изменить перед сборкой.
+Параметры подключения к основной БД указаны в файле src/main/resources/application.properties, к тестовой БД в файле src/test/resources/test-application.properties, при необходимости их можно изменить перед сборкой.
+
 Сборка выполняется командой:
 
 ```cmd
