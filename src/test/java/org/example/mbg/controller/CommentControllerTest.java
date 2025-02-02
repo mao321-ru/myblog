@@ -68,7 +68,7 @@ public class CommentControllerTest {
         mockMvc.perform( get( "/posts/{postId}", postId))
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())
-                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/*[@class=\"comment_text\"]/@value").string( commentText))
+                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/input/@value").string( commentText))
         ;
     }
 
@@ -91,7 +91,7 @@ public class CommentControllerTest {
         mockMvc.perform( get( "/posts/{postId}", postId))
                 //.andDo( print()) // вывод запроса и ответа
                 .andExpect( status().isOk())
-                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/*[@class=\"comment_text\"]/@value").string( commentText))
+                .andExpect( xpath(  POST_COMMENT_XPATH + "[1]/input/@value").string( commentText))
         ;
     }
 

@@ -52,7 +52,7 @@
     <ul class="comments__list">
         <form class='comment__list_form' th:each="cmt: ${post.comments}" th:action="@{|/posts/${post.postId}/comments/${cmt.commentId}|}" method="POST">
             <li class="comment" th:id="${cmt.commentId}">
-                <input readonly="" class="comment_text" th:value="${cmt.commentText}" name="commentText" />
+                <input readonly="" class="comment_text input_enter" th:value="${cmt.commentText}" name="commentText" />
                 <button type="button" class="comment__edit" onclick="handleEditCommentClick( this)"></button>
                 <button type="button" class="comment__delete" onclick="handleDeleteCommentClick( this)"></button>
                 <button type="button" class="comment__save" onclick="handleSaveCommentClick( this)">Сохранить</button>
@@ -62,7 +62,7 @@
     </ul>
     <form class='add__comment_form' th:action="@{|/posts/${post.postId}/comments|}" method="POST">
         <div class="add__comment">
-            <input placeholder="Введите комментарий" class="add__comment_text" name="commentText"></input>
+            <input placeholder="Введите комментарий" class="add__comment_text input_enter" name="commentText"></input>
             <button class="add__comment_button"></button>
         </div>
     </form>

@@ -11,6 +11,8 @@ const inputsPopup = document.querySelectorAll('.popup__input')
 const btnDeletePost = document.querySelector('.header__post_delete')
 const frmDeletePost = document.querySelector('.header__post_delete_form')
 
+
+
 // Форма редактирования поста
 
 // Открываем форму
@@ -61,6 +63,9 @@ const btnAddComment=document.querySelector('.add__comment_button')
 const inputAddComment = document.querySelector('.add__comment_text')
 const frmAddComment = document.querySelector('.add__comment_form')
 
+const inputsEnterSubmit = document.querySelectorAll('.input_enter')
+
+
 btnAddComment.addEventListener("click", (e)=>{
     e.preventDefault();
     if ( inputAddComment.value) {
@@ -69,13 +74,20 @@ btnAddComment.addEventListener("click", (e)=>{
 })
 
 // отправка комментария по нажатии на Enter (возможно с любыми модификторами, например Alt / Ctrl)
-inputAddComment.addEventListener('keydown', function(e) {
-    if ( e.keyCode === 13) {
-        e.preventDefault();
-        if ( inputAddComment.value) {
-            frmAddComment.submit();
+
+inputsEnterSubmit.forEach((input) => {
+    input.addEventListener('keydown', (e)=>{
+        if ( e.keyCode === 13){
+            e.preventDefault();
+            if (e.target.classList[0] === 'comment_text' && input.value){
+                const frm = e.form;
+                frm.submit();
+            }
+            else if(e.target.classList[0] === 'add__comment_text' && input.value){
+                frmAddComment.submit();
+            }
         }
-    }
+    })
 })
 
 function handleEditCommentClick( e) {
@@ -85,13 +97,6 @@ function handleEditCommentClick( e) {
     const cmtText = liCmt.querySelector('.comment_text');
     if ( btnSave.style.display !== 'block') {
         cmtText.removeAttribute('readonly');
-        cmtText.addEventListener('keydown', function(e) {
-            if ( e.keyCode === 13) {
-                if ( cmtText.value) {
-                    frm.submit();
-                }
-            }
-        })
         btnSave.style.display = 'block';
     }
 }
@@ -106,7 +111,7 @@ function handleSaveCommentClick( e) {
     const frm = e.form;
     const liCmt = e.parentElement;
     const cmtText = liCmt.querySelector('.comment_text');
-    if ( cmtText.value != '') {
+    if ( cmtText.value) {
         frm.submit();
     }
 }
