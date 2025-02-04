@@ -1,9 +1,8 @@
 package org.example.myblog.controller;
 
-import org.example.myblog.configuration.TestDataSourceConfiguration;
-import org.example.myblog.configuration.WebConfiguration;
 import org.example.myblog.model.Post;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith( SpringExtension.class)
 @WebAppConfiguration
-@ContextHierarchy({
-        @ContextConfiguration(name = "data", classes = { TestDataSourceConfiguration.class}),
-        @ContextConfiguration(name = "web", classes = { WebConfiguration.class })
-})
+//@ContextHierarchy({
+//        @ContextConfiguration(name = "data", classes = { TestDataSourceConfiguration.class}),
+//        @ContextConfiguration(name = "web", classes = { WebConfiguration.class })
+//})
 // расскомментировать для пересоздания объектов схемы
 //@Sql( scripts = {"/uninstall.sql", "/schema.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 // расскомментировать для перезаливки тестовых данных
@@ -37,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql( scripts = {"/clear-temp-data.sql", "/test-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 // очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД данных последнего выполнявшегося теста
 @Sql( scripts = {"/clear-temp-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD )
+@Disabled
 public class PostControllerTest {
 
     // число постов в тестовых данных

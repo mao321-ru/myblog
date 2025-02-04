@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
@@ -31,7 +32,7 @@ public class JdbcNativePostRepository implements PostRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final LobHandler lobHandler;
+    private final LobHandler lobHandler = new DefaultLobHandler();
 
     // Базовый SQL для получения данных поста и соответствующий маппер
     private String FIND_POST_BASE_SQL =

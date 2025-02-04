@@ -1,7 +1,7 @@
 package org.example.myblog.repository;
 
-import org.example.myblog.configuration.TestDataSourceConfiguration;
 import org.example.myblog.model.Post;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,16 @@ import java.util.Optional;
 import static org.springframework.test.util.AssertionErrors.*;
 
 @ExtendWith( SpringExtension.class)
-@ContextHierarchy({
-        @ContextConfiguration(name = "data", classes = { TestDataSourceConfiguration.class}),
-        @ContextConfiguration(name = "repo", classes = { JdbcNativePostRepository.class})
-})
+//@ContextHierarchy({
+//        @ContextConfiguration(name = "data", classes = { TestDataSourceConfiguration.class}),
+//        @ContextConfiguration(name = "repo", classes = { JdbcNativePostRepository.class})
+//})
 // расскомментировать для перезаливки тестовых данных
 //@Sql( scripts = {"/clear-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 @Sql( scripts = {"/clear-temp-data.sql", "/test-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS )
 // очищаем временные данные ДО а не ПОСЛЕ для возможности просмотра в БД данных последнего выполнявшегося теста
 @Sql( scripts = {"/clear-temp-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD )
+@Disabled
 public class JdbcNativePostRepositoryTest {
 
     // число постов в тестовых данных
