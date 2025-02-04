@@ -1,0 +1,227 @@
+.page{
+    margin: 0;
+}
+
+.header{
+    margin: 0;
+    padding: 0;
+    background: #B0C4DE;
+    height: 80px;
+    width: 100%;
+}
+
+.header__container{
+    margin: 0 auto;
+    padding-top: 10px;
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.header__post-edit{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    background-image: url(../images/btn_edit_post.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 40px;
+    height: 40px;
+}
+
+.header__post_delete{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    background-image: url(../images/btn_delete_post.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 40px;
+    height: 40px;
+}
+
+.header__post-edit:hover{
+    opacity: 0.8;
+}
+.header__title{
+    margin: 0;
+}
+.lenta{
+    margin: 0 auto;
+    max-width: 90%;
+    margin-top: 50px;
+}
+
+.posts{
+    margin-top: 70px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap:15px;
+}
+.post{
+    margin-top: 10px;
+    width: 100%;
+    border-bottom: 1px solid blue;
+}
+
+.post:hover{
+    background: #E0FFFF;
+}
+
+.post__likes_add{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    background-image: url(../images/btn_add_like.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+}
+
+.footer__generated{
+    font-size: 80%;
+    font-style: italic;
+}
+
+
+.popup{
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .5);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.popup__container{
+    height: 500px;
+    width: 500px;
+    background-color: white;
+    border-radius: 10px;
+    position: relative;
+    cursor: default;
+}
+
+.popup_opened{
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.popup__header{
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup__close{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    background-image: url(../images/btn_close_popup.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 20px;
+    height: 20px;
+}
+
+.popup__text{
+    resize: none;
+}
+
+.popup__save{
+    background: #B0E0E6;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-left: 15px;
+}
+
+.post__image_img{
+    height: 200px;
+}
+
+
+.add__comment_button{
+    width: 50px;
+    height: 50px;
+    background-image: url(../images/plus.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+}
+
+.add__comment{
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add__comment_text{
+    margin: 0;
+    width: 80%;
+    height: 40px;
+}
+
+.comment__edit{
+    width: 30px;
+    height: 30px;
+    background-image: url(../images/editCommentBtn.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+    margin-right: 40px;
+}
+
+.comments__list{
+    padding: 0;
+    margin-top: 20px;
+    margin: 0 auto;
+    width: 90%;
+    list-style: none;
+    border-bottom: 2px solid blue;
+}
+
+.comment_text{
+    margin: 0;
+    padding: 0;
+    width: 80%;
+    height: 40px;
+    border: none;
+    margin-right: 20px;
+}
+
+.comment__delete{
+    width: 30px;
+    height: 30px;
+    background-image: url(../images/deleteComment.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+}
+
+.comment{
+    border-bottom: 1px solid #7B68EE;
+}
+
+.comment__save{
+    display:none;
+}

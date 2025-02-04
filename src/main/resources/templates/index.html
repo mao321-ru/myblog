@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мой блог</title>
+    <link rel="stylesheet" href="css/index.css" th:href="@{/css/index.css}" />
+</head>
+<body class="page">
+    <header class="header">
+        <div class="header__container">
+            <h1 class="header__title">Мой блог</h1>
+            <div>
+                <button class="header__post-add"></button>
+            </div>
+        </div>
+    </header>
+    <div class="lenta">
+
+        <!-- Блок поиска постов -->
+        <form class='filter__form' th:action="@{/}" method="GET">
+        <div class="fiter__container">
+            <input name="tags" class="filter__tag" placeholder="Поиск..." th:value="${normalizedTags}" />
+            <input name="psize" class="filter__psize" type="hidden" value="50" />
+            <div class="dropdown">
+                <div class="dropdown__inform">
+                    <p class="dropdown__text">50</p>
+                    <button type="button" class="dropdown__button"></button>
+                </div>
+                <ul class="menu" id="optionsMenu">
+                    <li class="menu-item">10</li>
+                    <li class="menu-item">20</li>
+                    <li class="menu-item">50</li>
+                </ul>
+            </div>
+            <button type="button" class="filter__save">
+                <img class="filter__lupa" src="images/lupa.png" alt="lupa" />
+            </button>
+        </div>
+        </form>
+
+
+        <div class="posts">
+            <div class="post" th:each="post: ${posts}">
+                <div class="post__header">
+                    <a href="/posts/1" th:href="@{|/posts/${post.postId}|}" class="post__title" th:text="${post.title}">Байкал</a>
+                </div>
+                <p class="post__preview" th:utext="${#strings.replace(#strings.escapeXml(post.getPreviewText()),'&#10;','&lt;br /&gt;')}">Это замечательное место, которое нужно посетить каждому</p>
+                <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
+                <div class="post__image" th:if="${post.isImage}">
+                    <img class="post__image_img" th:src="@{|/posts/${post.postId}/image|}" alt="post_image" />
+                </div>
+                <div class="post__footer">
+                    <span class="post__likes" th:if="${post.likesCount}">Лайки: <span class="post__likes_count" th:text="${post.likesCount}">29</span></span>
+                    <span class="post__comments" th:if="${post.commentsCount}">Комментарии: <span class="post__comments_count" th:text="${post.commentsCount}">50</span></span>
+                    <span class="post__date">Добавлено: <span th:text="${#temporals.format(post.createTime,'dd.MM.yyyy HH:mm:ss')}">02.01.2024 18:30:41</span></span>
+                </div>
+            </div>
+        </div>
+        <div th:if="${pageNumbers}">
+            <p>Страницы:
+                <span class="pagination" th:each="pageNumber : ${pageNumbers}">
+                    <a th:href="@{/(tags=${normalizedTags}, psize=${posts.size}, page=${pageNumber})}"
+                        th:text="${ pageNumber==pageNumbers.size() and hasNextPage ? 'Следующая' : pageNumber }"></a>
+                </span>
+            </p>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
+    </div>
+
+    <!-- Динамически отображаемая форма добавления поста -->
+    <div class="popup popup_type_add">
+        <div class="popup__container">
+            <form class='popup__form' th:action="@{/posts}" method="POST" enctype="multipart/form-data">
+            <div class="popup__header">
+                <h2 class="popup__title">Создание поста</h2>
+                <button type="button" class="popup__close"></button>
+            </div>
+            <ul class='popup__iform'>
+                <li>
+                    <p>Заголовок:</p>
+                    <input class='popup__input popup__title_input' name='title'/>
+                </li>
+                <li>
+                    <p>Теги:</p>
+                    <input class="popup__input" name='tags'/>
+                </li>
+                <li>
+                    <p>Текст:</p>
+                    <textarea class='popup__text' name="text" rows="7" cols="53"></textarea>
+                </li>
+                <li>
+                    <input type="file" name="file" accept="image/*" />
+                </li>
+            </ul>
+            <button type="button" class='popup__save'>Сохранить</button>
+            </form>
+        </div>
+    </div>
+    <script defer="" src="scripts/index.js" th:src="@{/scripts/index.js}"></script>
+</body>
+</html>

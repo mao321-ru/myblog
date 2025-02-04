@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${'Мой блог: ' + post.title}">Мой блог: пост</title>
+    <link rel="stylesheet" href="css/post.css" th:href="@{/css/post.css}" />
+</head>
+<body class="page">
+    <header class="header">
+        <div class="header__container">
+            <h3 class="header__title">
+                <a th:href="@{/}">Мой блог</a>
+                :
+                <span th:text="${post.title}"></span>
+            </h3>
+            <form class='header__post_delete_form' th:action="@{|/posts/${post.postId}|}" method="POST">
+                <div>
+                    <input type="hidden" name="_method" value="delete" />
+                    <button class="header__post-edit"></button>
+                    <button class="header__post_delete"></button>
+                </div>
+            </form>
+        </div>
+    </header>
+    <div class="lenta">
+
+        <div class="posts">
+            <div class="post">
+                <div class="post__header">
+                    <p class="post__title" th:text="${post.title}">Байкал</p>
+                </div>
+                <p class="post__text" th:utext="${#strings.replace(#strings.escapeXml(post.text),'&#10;','&lt;br /&gt;')}">Это замечательное место, которое нужно посетить каждому</p>
+                <p class="post__tags" th:text="${post.tags}">#test #noImage</p>
+                <div class="post__image" th:if="${post.isImage}">
+                    <img class="post__image_img" th:src="@{|/posts/${post.postId}/image|}" alt="post_image" />
+                </div>
+                <form class='post___likes_form' th:action="@{|/posts/${post.postId}/add-like|}" method="POST">
+                    <div class="post__likes">
+                        <span class="post__likes_text">Лайки:</span>
+                        <span class="post__likes_count" th:text="${post.likesCount}">29</span>
+                        <button class="post__likes_add"></button>
+                    </div>
+                </form>
+
+                <div class="post__footer">
+                    <span class="post__date">Добавлено: <span th:text="${#temporals.format(post.createTime,'dd.MM.yyyy HH:mm:ss')}">02.01.2024 18:30:41</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="comments__list">
+        <form class='comment__list_form' th:each="cmt: ${post.comments}" th:action="@{|/posts/${post.postId}/comments/${cmt.commentId}|}" method="POST">
+            <li class="comment" th:id="${cmt.commentId}">
+                <input readonly="" class="comment_text input_enter" th:value="${cmt.commentText}" name="commentText" />
+                <button type="button" class="comment__edit" onclick="handleEditCommentClick( this)"></button>
+                <button type="button" class="comment__delete" onclick="handleDeleteCommentClick( this)"></button>
+                <button type="button" class="comment__save" onclick="handleSaveCommentClick( this)">Сохранить</button>
+            </li>
+            <input class='comment__list_form_method' type="hidden" name="_method" value="" />
+        </form>
+    </ul>
+    <form class='add__comment_form' th:action="@{|/posts/${post.postId}/comments|}" method="POST">
+        <div class="add__comment">
+            <input placeholder="Введите комментарий" class="add__comment_text input_enter" name="commentText"></input>
+            <button class="add__comment_button"></button>
+        </div>
+    </form>
+    <div class="footer">
+        <p class="footer__generated">Сформировано: <span th:text="${#temporals.format(generatedTime,'dd.MM.yyyy HH:mm:ss')}"></span></p>
+    </div>
+
+    <!-- Динамически отображаемая форма редактирования поста -->
+    <div class="popup popup_type_add">
+        <div class="popup__container">
+            <form class='popup__form' th:action="@{|/posts/${post.postId}|}" method="POST" enctype="multipart/form-data">
+            <div class="popup__header">
+                <h2 class="popup__title">Редактирование поста</h2>
+                <button type="button" class="popup__close"></button>
+            </div>
+            <ul class='popup__iform'>
+                <li>
+                    <p>Заголовок:</p>
+                    <input class='popup__input popup__title_input' name='title' th:value="${post.title}"/>
+                </li>
+                <li>
+                    <p>Теги:</p>
+                    <input class="popup__input" name='tags' th:value="${post.tags}"/>
+                </li>
+                <li>
+                    <p>Текст:</p>
+                    <textarea class='popup__text' name="text" rows="7" cols="53" th:text="${post.text}"></textarea>
+                </li>
+                <li>
+                    <input type="file" name="file" accept="image/*" />
+                    <span th:if="${post.isImage}">
+                        <input type="checkbox" name="delImage" />
+                        <label for="delImage">Удалить изображение</label>
+                    </span>
+                </li>
+            </ul>
+            <button type="button" class='popup__save'>Сохранить</button>
+            <input type="hidden" name="_method" value="" />
+            </form>
+        </div>
+    </div>
+    <script defer="" src="scripts/post.js" th:src="@{/scripts/post.js}"></script>
+</body>
+</html>
