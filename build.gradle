@@ -35,5 +35,10 @@ dependencies {
 }
 
 tasks.named('test') {
+    // подробный вывод по выполнявшимся тестам в консоль
+    testLogging {
+        //events "passed", "skipped", "failed", "standardOut", "standardError"
+        events "passed", "failed", "standardOut", "standardError"
+    }
     useJUnitPlatform()
 }
