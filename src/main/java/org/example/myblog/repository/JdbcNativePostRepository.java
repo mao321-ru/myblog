@@ -10,18 +10,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.lob.DefaultLobHandler;
-import org.springframework.jdbc.support.lob.LobCreator;
-import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +25,6 @@ import java.util.Optional;
 public class JdbcNativePostRepository implements PostRepository {
 
     private final JdbcTemplate jdbcTemplate;
-
-    private final LobHandler lobHandler = new DefaultLobHandler();
 
     // Базовый SQL для получения данных поста и соответствующий маппер
     private String FIND_POST_BASE_SQL =
@@ -305,8 +297,8 @@ public class JdbcNativePostRepository implements PostRepository {
         var img = image != null
                 ? image
                 : Post.Image.builder().origFilename("").contentType( "").fileData( new byte[]{}).build();
-        var fd = img.getFileData();
-        jdbcTemplate.execute(
+        byte[] fd = img.getFileData();
+        jdbcTemplate.update(
                 """
                 merge into
                     post_images d
@@ -351,15 +343,11 @@ public class JdbcNativePostRepository implements PostRepository {
                         d.post_id = ?
                     then delete
                 """,
-                new AbstractLobCreatingPreparedStatementCallback(lobHandler) {
-                    protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException {
-                        ps.setLong(1, postId);
-                        ps.setString(2, img.getOrigFilename());
-                        ps.setString(3, img.getContentType());
-                        lobCreator.setBlobAsBinaryStream( ps, 4, new ByteArrayInputStream( fd), fd.length);
-                        ps.setLong(5, postId);
-                    }
-                }
+                postId,
+                img.getOrigFilename(),
+                img.getContentType(),
+                fd,
+                postId
         );
     }
 }
