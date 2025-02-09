@@ -5,7 +5,7 @@
 В случае доступности Docker Compose можно установить и запустить приложение командой:
 
 ```cmd
-  ./gradlew clean assemble
+  ./gradlew clean bootJar
   docker compose up --build --detach
 ```
 После установки приложение будет доступно по URL:
@@ -30,7 +30,7 @@
 Для сборки используется Gradle, команда:
 
 ```cmd
-   ./gradlew clean assemble
+   ./gradlew clean bootJar
 ```
 
 ## Установка приложения
