@@ -1,4 +1,26 @@
-# myblog: Приложение-блог с использованием Spring Framework
+# myblog: Приложение-блог с использованием Spring Boot
+
+## Установка приложения в Docker
+
+В случае доступности Docker Compose можно установить и запустить приложение командой:
+
+```cmd
+  ./gradlew clean assemble
+  docker compose up --build --detach
+```
+После установки приложение будет доступно по URL:
+
+http://localhost:9000/
+
+Команда для остановки и удаление приложения:
+
+```cmd
+  docker compose down
+```
+
+Указанные выше команды успешно выполнялись с помощью:
+- Docker version 27.5.1 build 9f9e405
+- Docker Compose version v2.32.4-desktop.1 (вместо "docker compose" можно использовать "docker-compose")
 
 ## Сборка приложения
 
@@ -19,7 +41,7 @@
 ## Установка приложения в сервлет-контейнер
 
 Предварительно нужно установить:
-- PostgreSQL (например PostgreSQL 17.2)
+- PostgreSQL 17.x (например PostgreSQL 17.2)
 - Apache Tomcat 10.x (например, Apache Tomcat 10.1.34)
 
 Порядок установки:

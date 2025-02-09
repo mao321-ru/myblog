@@ -1,0 +1,35 @@
+name: myblog
+services:
+  app:
+    container_name: myblog
+    image: myblog
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/myblogdb
+      SPRING_DATASOURCE_USERNAME: myblogdev
+      SPRING_DATASOURCE_PASSWORD: myblogdev
+      SERVER_PORT: 8080
+    depends_on:
+      - postgres
+  postgres:
+    container_name: postgres
+    image: postgres:17.2-alpine3.20
+    restart: always
+    # set shared memory limit (reason: https://hub.docker.com/_/postgres)
+    shm_size: 128mb
+    ports:
+      - "9432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      # run scripts for create user and database
+      - ./src/main/db/init:/docker-entrypoint-initdb.d
+      - myblogdb-data:/var/lib/postgresql/data
+volumes:
+  myblogdb-data:
