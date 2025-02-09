@@ -10,7 +10,7 @@
 ```
 После установки приложение будет доступно по URL:
 
-http://localhost:9000/
+[http://localhost:9000](http://localhost:9000)
 
 Команда для остановки и удаление приложения:
 
@@ -24,72 +24,65 @@ http://localhost:9000/
 
 ## Сборка приложения
 
-Для сборки используется Maven (например, Maven 3.9.9), команда:
+Предварительные требования:
+- Java 21 (например, Eclipse Temurin OpenJDK 21.0.5+11)
+
+Для сборки используется Gradle, команда:
 
 ```cmd
-   mvn clean package
+   ./gradlew clean assemble
 ```
 
-## Запуск тестов
+## Установка приложения
 
-Тесты выполняются при сборке, можно выполнить отдельно:
-
-```cmd
-  mvn test
-```
-
-## Установка приложения в сервлет-контейнер
-
-Предварительно нужно установить:
+Предварительные требования:
 - PostgreSQL 17.x (например PostgreSQL 17.2)
-- Apache Tomcat 10.x (например, Apache Tomcat 10.1.34)
 
 Порядок установки:
 
 - создать пользователя в PostgreSQL
 
-Пример создания пользователя myblogdev с паролем myblogdev скриптом src/main/db/myblogdev.sql с помощью утилиты командой строки psql:
+Пример создания пользователя myblogdev с паролем myblogdev скриптом src/main/db/init/10_myblogdev.sql с помощью утилиты командой строки psql:
 
 ```cmd
-  psql postgresql://postgres@localhost:5432/postgres -f src/main/db/myblogdev.sql
+  psql postgresql://postgres@localhost:5432/postgres -f src/main/db/init/10_myblogdev.sql
 ```
 
 - создать БД в PostgreSQL
 
-Пример создания БД myblogdb, принадлежащей пользователю myblogdev скриптом src/main/db/myblogdb.sql:
+Пример создания БД myblogdb, принадлежащей пользователю myblogdev скриптом src/main/db/init/20_myblogdb.sql:
 
 ```cmd
-  psql postgresql://myblogdev@localhost:5432/postgres -f src/main/db/myblogdb.sql
+  psql postgresql://myblogdev@localhost:5432/postgres -f src/main/db/init/20_myblogdb.sql
 ```
 
-- создать тестовую БД в PostgreSQL для использования в автотестах при сборке приложения
-
-Пример создания БД myblogdb_test для пользователя myblogdev скриптом src/test/db/myblogdb_test.sql:
+- запустить приложение в консоли командой (прервать выполнение можно по Ctrl-C)
 
 ```cmd
-  psql postgresql://myblogdev@localhost:5432/postgres -f src/test/db/myblogdb_test.sql
+  java -jar build/libs/myblog-0.0.2-SNAPSHOT.jar
 ```
 
-- собрать war-файл приложения
+После запуска приложение будет доступно по URL:
 
-Параметры подключения к основной БД указаны в файле src/main/resources/application.properties, к тестовой БД в файле src/test/resources/test-application.properties, при необходимости их можно изменить перед сборкой.
+[http://localhost:9090](http://localhost:9090)
 
-Сборка выполняется командой:
+
+## Запуск тестов
+
+Предварительно нужно:
+
+- создать пользователя myblogdev в PostgreSQL (если он не был создан при [Установка приложения](#Установка-приложения), пример команды там же);
+
+- создать тестовую БД в PostgreSQL для использования в тестах
+
+Пример создания БД myblogdb_test для пользователя myblogdev скриптом src/integrationTest/db/myblogdb_test.sql:
 
 ```cmd
-   mvn clean package
+  psql postgresql://myblogdev@localhost:5432/postgres -f src/integrationTest/db/myblogdb_test.sql
 ```
 
-- установить приложение в Tomcat
+Тесты запускаются командой:
 
-Нужно скопировать war-файл target/myblog.war в подкаталог webapps установки Tomcat.
-
-
-## Запуск и использование
-
-После установки приложение будет доступно по URL:
-
-http://localhost:8080/myblog/
-
-(в случае локальной установки Apache Tomcat и запуска по портом по умолчанию 8080)
-
+```cmd
+  ./gradlew cleanTest check
+```
